@@ -2,7 +2,8 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "yarn"
+    "packageManager": "yarn",
+    "analytics": false
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -96,6 +97,18 @@
               "src/styles.scss"
             ],
             "scripts": []
+          }
+        },
+        "e2e": {
+          "builder": "@puppeteer/ng-schematics:puppeteer",
+          "options": {
+            "devServerTarget": "angular-webxr-gallery:serve",
+            "testRunner": "jest"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "angular-webxr-gallery:serve:production"
+            }
           }
         }
       }
