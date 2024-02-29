@@ -1,113 +1,171 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, NgZone, ViewChild } from '@angular/core';
-import { BoxGeometry, Clock, Color, DirectionalLight, HemisphereLight, Mesh, MeshBasicMaterial, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  Input,
+  NgZone,
+  ViewChild,
+} from '@angular/core';
+
+import {
+  BoxGeometry,
+  Clock,
+  Color,
+  DirectionalLight,
+  HemisphereLight,
+  Mesh,
+  MeshBasicMaterial,
+  Object3D,
+  PerspectiveCamera,
+  PlaneGeometry,
+  Scene,
+  WebGLRenderer,
+} from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
 import { LoadersService } from '../loaders.service';
 
 export interface SceneOptions {
-  width: 800;
-  height?: 600;
-  model?: string;
+  width?: number;
+  height?: number;
 }
 
-@Component( {
+@Component({
   selector: 'art-scene',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [],
   templateUrl: './scene.component.html',
-  styleUrl: './scene.component.scss'
-} )
+  styleUrl: './scene.component.scss',
+})
 export class SceneComponent {
-  public camera: any;
+  // @ts-ignore
+  public camera: PerspectiveCamera;
   public clock = new Clock();
-  model: any;
-  box: any;
-  private renderer: any;
+  // @ts-ignore
+  public controls: OrbitControls;
   public scene: Scene = new Scene();
-  renderFunctions: Function[] = [];
-  defaultOptions = {
+  private defaultOptions: SceneOptions = {
     width: window.innerWidth || 800,
     height: window.innerHeight || 600,
-    model: 'assets/model.glb'
   };
+  // @ts-ignore
+  private renderer: WebGLRenderer;
+  private renderFunctions: Function[] = [];
 
-  @Input( { required: false } ) options: any = {};
+  @Input({ required: false }) options: SceneOptions = {};
 
-  @ViewChild( 'canvas', { static: true } ) canvas!: ElementRef<HTMLCanvasElement>;
-  private get canvasEl (): HTMLCanvasElement {
+  @ViewChild('canvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
+  private get canvasEl(): HTMLCanvasElement {
     return this.canvas?.nativeElement;
   }
 
-  constructor(
-    private ngZone: NgZone,
-  ) { }
+  constructor(private ngZone: NgZone, public loadersService: LoadersService) {}
 
-  ngAfterViewInit (): void {
-
-    this.options = Object.assign( {}, this.defaultOptions, this.options );
-    const w = this.options.width || this.canvas.nativeElement.width;
+  ngAfterViewInit(): void {
+    this.options = Object.assign({}, this.defaultOptions, this.options);
+    const w = this.options.width || this.canvasEl.width;
     const h = this.options.height || this.canvasEl.height;
 
-    this.camera = new PerspectiveCamera( 70, w / h, 0.1, 100 );
-    this.scene.add( this.camera );
-    this.scene.background = new Color( 'black' );
+    // Camera
+    this.camera = new PerspectiveCamera(40, w / h, 0.1, 200);
+    this.camera.position.y = 1.6;
+    this.scene.add(this.camera);
+    this.scene.background = new Color('black');
 
-    this.renderer = new WebGLRenderer( { canvas: this.canvasEl, antialias: true, alpha: true } );
-    this.renderer.setPixelRatio( window.devicePixelRatio );
-    this.renderer.setSize( w, h );
+    // Renderer
+    this.renderer = new WebGLRenderer({
+      canvas: this.canvasEl,
+      antialias: true,
+      alpha: true,
+    });
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setSize(w, h);
 
-    const ambient = new HemisphereLight( 0xffffff, 0xbbbbff, 3 );
-    this.scene.add( ambient );
+    // Lights
+    const ambient = new HemisphereLight(0xffffff, 0xbbbbff, 3);
+    this.scene.add(ambient);
 
     const light = new DirectionalLight();
-    light.position.set( 0.2, 1, 1 );
-    this.scene.add( light );
+    light.position.set(0.2, 1, 1);
+    this.scene.add(light);
 
-    if ( this.options.model ) {
-      // this.loadersService.loadGLTF( this.options.model ).then( ( gltf ) => {
+    // Controls
+    this.addControls();
 
-      // } );
-      // Load model or just get the model?
-      // this.scene.add( this.options.model );
+    // this.debug();
 
-    }
-
-    // To test the scene
-    this.box = new Mesh(
-      new BoxGeometry( 1, 1, 1 ),
-      new MeshBasicMaterial( { color: 0x00ff00 } )
+    // Animation Loop
+    this.ngZone.runOutsideAngular(() =>
+      this.renderer.setAnimationLoop(() => this.render())
     );
-    this.box.position.z = - 3;
-    this.scene.add( this.box );
-
-    const controls = new OrbitControls( this.camera, this.renderer.domElement );
-    this.ngZone.runOutsideAngular( () => this.renderer.setAnimationLoop( () => this.render() ) );
-
   }
 
-  addToRender ( f: Function ) {
-    this.renderFunctions.push( f );
-  }
-
-  removeFromRender ( f: Function ) {
-    this.renderFunctions = this.renderFunctions.filter( ( fn ) => fn !== f );
-  }
-
-  render () {
+  // Render function runs on each frame
+  render() {
     const delta = this.clock.getDelta();
-    this.box.rotation.y += 0.01;
-    this.renderFunctions.forEach( ( f ) => f( delta ) );
-    this.renderer.render( this.scene, this.camera );
+    this.renderFunctions.forEach((f) => f(delta));
+    this.controls.update();
+    this.renderer.render(this.scene, this.camera);
   }
 
-  addToScene ( obj: any ) {
-    this.scene.add( obj );
-    console.log( 'added to scene ', this.scene, obj );
-
+  // Add a function to the render loop
+  addToRender(f: Function) {
+    this.renderFunctions.push(f);
   }
 
-  removeFromScene ( obj: any ) {
-    this.scene.remove( obj );
+  removeFromRender(f: Function) {
+    this.renderFunctions = this.renderFunctions.filter((fn) => fn !== f);
   }
 
+  // Add an object to the scene
+  addToScene(obj: Object3D) {
+    this.scene.add(obj);
+  }
+
+  removeFromScene(obj: Object3D) {
+    this.scene.remove(obj);
+  }
+
+  addControls() {
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.listenToKeyEvents(window); // optional
+    // Set the controls target to the camera/user position
+    this.controls.target.set(0, 1.6, 0);
+    this.controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+    this.controls.dampingFactor = 0.05;
+
+    this.controls.screenSpacePanning = false;
+
+    this.controls.minDistance = 100;
+    this.controls.maxDistance = 500;
+
+    this.controls.maxPolarAngle = Math.PI / 2;
+  }
+
+  // Resize the canvas when the window is resized
+  onResize(e: Event) {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    // Set the camera's aspect ratio
+    this.camera.aspect = w / h;
+
+    // update the camera's frustum
+    this.camera.updateProjectionMatrix();
+
+    // update the size of the renderer & the canvas
+    this.renderer.setSize(w, h);
+
+    // set the pixel ratio (for mobile devices)
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+  }
+
+  debug() {
+    // Add a cube to the scene for testing purposes
+    const boxGeo = new BoxGeometry(2, 2, 2);
+    const material = new MeshBasicMaterial({ color: 0x00ff00 });
+    const cube = new Mesh(boxGeo, material);
+    this.scene.add(cube);
+  }
 }
