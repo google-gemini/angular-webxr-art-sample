@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { GalleryComponent } from './gallery/gallery.component';
 import { LoadingComponent } from './loading/loading.component';
+import { TestComponent } from './three/test/test.component';
 
 export const routes: Routes = [
     {
@@ -14,8 +15,13 @@ export const routes: Routes = [
         title: 'WebXR Gallery'
     },
     {
+        path: 'test',
+        component: TestComponent,
+        title: 'Test Gallery'
+    },
+    {
         path: '',
-        redirectTo: '/loading',
+        redirectTo: '/gallery',
         pathMatch: 'full'
     }
 ];

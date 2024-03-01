@@ -4,15 +4,15 @@ import { LoadingManager, Object3D, TextureLoader } from 'three';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-@Injectable({
+@Injectable( {
   providedIn: 'root',
-})
+} )
 export class LoadersService {
-  public loadingProgress: WritableSignal<number> = signal(0);
+  public loadingProgress: WritableSignal<number> = signal( 0 );
   private loadingManager = new LoadingManager();
-  private gltfLoader = new GLTFLoader(this.loadingManager);
-  private textureLoader: TextureLoader = new TextureLoader(this.loadingManager);
-  private dracoLoader = new DRACOLoader(this.loadingManager);
+  private gltfLoader = new GLTFLoader( this.loadingManager );
+  private textureLoader: TextureLoader = new TextureLoader( this.loadingManager );
+  private dracoLoader = new DRACOLoader( this.loadingManager );
   private loadStartTime = Date.now();
 
   constructor() {
@@ -23,7 +23,7 @@ export class LoadersService {
       itemsTotal: number
     ) => {
       this.loadStartTime = Date.now();
-      this.onStart(url, itemsLoaded, itemsTotal);
+      this.onStart( url, itemsLoaded, itemsTotal );
     };
 
     this.loadingManager.onProgress = (
@@ -34,14 +34,14 @@ export class LoadersService {
       console.log(
         `Loading file: ${url}.\nLoaded ${itemsLoaded} of ${itemsTotal} files.`
       );
-      this.loadingProgress.set((itemsLoaded * 100) / itemsTotal);
+      this.loadingProgress.set( ( itemsLoaded * 100 ) / itemsTotal );
     };
 
     this.loadingManager.onLoad = () => {
-      this.loadingProgress.set(100);
+      this.loadingProgress.set( 100 );
       const time = Date.now();
-      const elapsedSec = (time - this.loadStartTime) / 1000;
-      console.log(`Loading complete, seconds elapsed = ${elapsedSec}`);
+      const elapsedSec = ( time - this.loadStartTime ) / 1000;
+      console.log( `Loading complete, seconds elapsed = ${elapsedSec}` );
       // gtag( 'event', 'loaded', {
       //   'description': `All Assets are loaded in ${elapsedSec} seconds`,
       //   'event_category': 'loading',
@@ -50,8 +50,8 @@ export class LoadersService {
       // } );
     };
 
-    this.loadingManager.onError = (url: string) => {
-      console.error('There was an error loading ' + url);
+    this.loadingManager.onError = ( url: string ) => {
+      console.error( 'There was an error loading ' + url );
       // gtag( 'event', 'error_loading', {
       //   'description': `Error loading ${url}`,
       //   'event_category': 'loading',
@@ -64,29 +64,30 @@ export class LoadersService {
     this.dracoLoader.setDecoderPath(
       'https://www.gstatic.com/draco/versioned/decoders/1.5.7/'
     );
-    this.dracoLoader.setDecoderConfig({ type: 'js' });
+    this.dracoLoader.setDecoderConfig( { type: 'js' } );
     this.dracoLoader.preload();
-    this.gltfLoader.setDRACOLoader(this.dracoLoader);
+    this.gltfLoader.setDRACOLoader( this.dracoLoader );
   }
 
   // Load a GLTF model
-  loadGLTF(ops: {
+  loadGLTF ( ops: {
     path: string;
     onLoadCB: Function;
     onLoadProgress?: Function;
-  }) {
+  } ) {
     this.gltfLoader.load(
       ops.path,
-      (gltf): Object3D => {
-        const model = gltf.scene.children[0];
-        ops.onLoadCB(model);
+      ( gltf ): Object3D => {
+        const model = gltf.scene;
+        console.log( 'gltf ', gltf );
+        ops.onLoadCB( model );
         return model;
       },
-      (xhr: any) => {
-        ops.onLoadProgress && ops.onLoadProgress(xhr);
+      ( xhr: any ) => {
+        ops.onLoadProgress && ops.onLoadProgress( xhr );
       },
-      (err) => {
-        console.error('Error loading model ', err);
+      ( err ) => {
+        console.error( 'Error loading model ', err );
         // gtag( 'event', 'error_loading_model', {
         //   'description': `Error loading ${ops.path}`,
         //   'event_category': 'loading',
@@ -98,12 +99,12 @@ export class LoadersService {
   }
 
   // Load a texture
-  loadTexture(path: string) {
-    return this.textureLoader.load(path);
+  loadTexture ( path: string ) {
+    return this.textureLoader.load( path );
   }
 
   // Loading manager function to run on every file load
-  onStart(url: string, item: any, total: any) {
+  onStart ( url: string, item: any, total: any ) {
     console.log(
       `Started loading file: ${url}. Now loading item ${item} of ${total}.`
     );

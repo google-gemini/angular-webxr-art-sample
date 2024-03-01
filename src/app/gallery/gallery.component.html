@@ -1,5 +1,5 @@
 <!-- <art-tweet></art-tweet> -->
-@defer (on viewport) {
+<!-- @defer (on viewport) {
 <art-scene />
 } @loading (after 100ms; minimum 1s) {
 <art-loading [delta]="loadersService.loadingProgress()"></art-loading>
@@ -7,11 +7,9 @@
 <div>Scene placeholder</div>
 } @error {
 <p>Failed to load the gallery</p>
-}
+} -->
 
 <!-- @if(loadersService.loadingProgress()<100){ <art-loading [delta]="loadersService.loadingProgress()"></art-loading>
     } @else {
-    <p>Loading is not visible</p>
-    <art-scene /> 
-} -->
-<!-- <canvas #canvas (window:resize)="sceneService.onResize($event)" [attr.aria-label]="canvas"></canvas> -->
+    <p>Loading is not visible</p>} -->
+<canvas #canvas (window:resize)="onResize($event)" [attr.aria-label]="canvas"></canvas>
