@@ -4,8 +4,9 @@ import { Object3D } from 'three';
 
 import { LoadingComponent } from '../loading/loading.component';
 import { LoadersService } from '../three/loaders.service';
-import { SceneComponent } from '../three/scene/scene.component';
 import { PrimitivesService } from '../three/primitives.service';
+import { SceneComponent } from '../three/scene/scene.component';
+import { XRService } from '../three/xr.service';
 
 @Component( {
   selector: 'art-gallery',
@@ -14,14 +15,14 @@ import { PrimitivesService } from '../three/primitives.service';
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.scss'
 } )
+
 export class GalleryComponent extends SceneComponent {
-  constructor( ngZone: NgZone, loadersService: LoadersService, private primitives: PrimitivesService ) {
-    super( ngZone, loadersService );
+  constructor( ngZone: NgZone, loadersService: LoadersService, private primitives: PrimitivesService, xrService: XRService ) {
+    super( ngZone, loadersService, xrService );
   }
 
   override ngAfterViewInit (): void {
     super.ngAfterViewInit();
-
 
     // Load the logo
     const model = this.loadersService.loadGLTF( {

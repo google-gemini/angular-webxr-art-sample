@@ -8,22 +8,17 @@ import {
 } from '@angular/core';
 
 import {
-  BoxGeometry,
   Clock,
-  Color,
-  DirectionalLight,
-  Fog,
-  HemisphereLight,
-  Mesh,
-  MeshBasicMaterial,
-  Object3D,
+  Color, HemisphereLight, Object3D,
   PerspectiveCamera, Scene,
   WebGLRenderer
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { XRButton } from 'three/examples/jsm/webxr/XRButton';
+import GUI from 'lil-gui';
 
 import { LoadersService } from '../loaders.service';
-import GUI from 'lil-gui';
+import { XRService } from '../xr.service';
 
 export interface SceneOptions {
   width?: number;
@@ -63,7 +58,7 @@ export class SceneComponent {
     return this.canvas?.nativeElement;
   }
 
-  constructor( private ngZone: NgZone, public loadersService: LoadersService ) { }
+  constructor( private ngZone: NgZone, public loadersService: LoadersService, public xrService: XRService ) { }
 
   ngAfterViewInit (): void {
     this.options = Object.assign( {}, this.defaultOptions, this.options );
@@ -97,6 +92,22 @@ export class SceneComponent {
     this.ngZone.runOutsideAngular( () =>
       this.renderer.setAnimationLoop( () => this.render() )
     );
+
+    this.afterInit();
+  }
+
+  afterInit () {
+    // XR 
+    // Add XR button even if WebXR is not supported
+    const xrButton = XRButton.createButton( this.renderer );
+    xrButton.addEventListener( 'click', ( e ) => {
+      console.log( 'clicked xrButton ', e );
+    } );
+    document.body.appendChild( xrButton );
+
+    // Check XR Support and determine if the session is AR or VR
+    // Initiate a session if supported
+    this.xrService.checkXRSupport( this.renderer );
   }
 
   // Render function runs on each frame

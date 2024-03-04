@@ -79,7 +79,7 @@ export class LoadersService {
       ops.path,
       ( gltf ): Object3D => {
         const model = gltf.scene;
-        console.log( 'gltf ', gltf );
+        // console.log( 'gltf ', gltf );
         ops.onLoadCB( model );
         return model;
       },

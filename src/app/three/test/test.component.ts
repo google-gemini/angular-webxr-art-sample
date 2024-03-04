@@ -4,6 +4,7 @@ import { SceneComponent } from '../scene/scene.component';
 import { LoadersService } from '../loaders.service';
 import { PrimitivesService } from '../primitives.service';
 import { Color, DirectionalLight, DirectionalLightHelper, Fog, HemisphereLight, HemisphereLightHelper, Mesh, MeshPhongMaterial, Object3D, PlaneGeometry } from 'three';
+import { XRService } from '../xr.service';
 
 @Component( {
   selector: 'art-test',
@@ -14,8 +15,8 @@ import { Color, DirectionalLight, DirectionalLightHelper, Fog, HemisphereLight, 
 } )
 export class TestComponent extends SceneComponent {
 
-  constructor( ngZone: NgZone, loadersService: LoadersService, private primitives: PrimitivesService ) {
-    super( ngZone, loadersService );
+  constructor( ngZone: NgZone, loadersService: LoadersService, private primitives: PrimitivesService, xrService: XRService ) {
+    super( ngZone, loadersService, xrService );
   }
 
   override ngAfterViewInit (): void {
