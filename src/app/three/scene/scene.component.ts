@@ -16,6 +16,8 @@ import {
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { XRButton } from 'three/examples/jsm/webxr/XRButton';
 import GUI from 'lil-gui';
+import Stats from 'three/examples/jsm/libs/stats.module';
+import { GPUStatsPanel } from 'three/examples/jsm/utils/GPUStatsPanel';
 
 import { LoadersService } from '../loaders.service';
 import { XRService } from '../xr.service';
@@ -179,7 +181,7 @@ export class SceneComponent {
   }
 
   debug () {
-    this.gui = new GUI();
+
     // Add a cube to the scene for testing purposes
     // const boxGeo = new BoxGeometry( 10, 10, 10 );
     // const material = new MeshBasicMaterial( { color: 0x00ff00 } );
@@ -188,10 +190,23 @@ export class SceneComponent {
     // this.scene.add( cube );
     // this.addToRender( () => cube.rotation.y += 0.01 );
 
+    // GUI
+    this.gui = new GUI();
     const w = window.innerWidth;
     const camera = this.gui.addFolder( 'Camera Position' );
     camera.add( this.camera.position, 'x', -200, 200, 1 );
     camera.add( this.camera.position, 'y', 0, 2, 0.1 );
     camera.add( this.camera.position, 'z', 0, 10, 1 );
+
+    // Stats
+
+    const stats = new Stats();
+    document.body.appendChild( stats.dom );
+
+    const gpuPanel = new GPUStatsPanel( this.renderer.getContext() );
+    stats.addPanel( gpuPanel );
+    stats.showPanel( 0 );
+    this.addToRender( () => stats.update() );
+
   }
 }
