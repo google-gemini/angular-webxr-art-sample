@@ -6,7 +6,7 @@ import { BoxGeometry, Mesh, MeshBasicMaterial, MeshPhongMaterial, PlaneGeometry 
 } )
 export class PrimitivesService {
   public material = new MeshBasicMaterial( { color: 0x00ff00 } );
-  public floorMaterial = new MeshPhongMaterial( { color: 0xcbcbcb, depthWrite: false } );
+  public floorMaterial = new MeshPhongMaterial( { color: 'white', depthWrite: false } );
   constructor() { }
 
   createPlane ( ops: any ) {
