@@ -10,7 +10,7 @@ export class PrimitivesService {
   constructor() { }
 
   createPlane ( ops: any ) {
-    const geo = ops.size ? new PlaneGeometry( ops.size, ops.size ) : new PlaneGeometry();
+    const geo = ops.size ? new PlaneGeometry( ops.width, ops.height ) : new PlaneGeometry();
     const mesh = new Mesh( geo, ops.material || this.floorMaterial );
     return mesh;
   }

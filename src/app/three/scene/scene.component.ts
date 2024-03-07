@@ -50,7 +50,7 @@ export class SceneComponent {
     height: window.innerHeight || 600,
   };
   // @ts-ignore
-  private renderer: WebGLRenderer;
+  public renderer: WebGLRenderer;
   private renderFunctions: Function[] = [];
 
   @Input( { required: false } ) options: SceneOptions = {};
@@ -149,10 +149,10 @@ export class SceneComponent {
 
     this.controls.screenSpacePanning = false;
 
-    this.controls.minDistance = -100;
-    this.controls.maxDistance = 500;
-
-    this.controls.maxPolarAngle = Math.PI / 2;
+    this.controls.minDistance = 5;
+    this.controls.maxDistance = 60;
+    this.controls.maxPolarAngle = Math.PI / 2 - 0.05; // prevent camera below ground
+    this.controls.minPolarAngle = Math.PI / 4;        // prevent top down view
     this.controls.update();
   }
 

@@ -1,6 +1,6 @@
 import { Component, NgZone } from '@angular/core';
 
-import { Object3D } from 'three';
+import { MeshBasicMaterial, Object3D } from 'three';
 
 import { LoadingComponent } from '../loading/loading.component';
 import { LoadersService } from '../three/loaders.service';
@@ -34,7 +34,7 @@ export class GalleryComponent extends SceneComponent {
 
   createEnv () {
     this.addLights();
-    const floor = this.primitives.createPlane( { size: 20 } );
+    const floor = this.primitives.createPlane( { width: 20, height: 20, material: new MeshBasicMaterial() } );
     floor.position.set( 0, 0, 0 );
     floor.rotation.x = - Math.PI / 2;
     floor.receiveShadow = true;

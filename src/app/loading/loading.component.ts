@@ -35,8 +35,7 @@ export class LoadingComponent extends SceneComponent {
       onLoadCB: this.onLoad.bind( this ),
     } );
 
-    const particleAnimation = this.particlesService.createSmoke( this.scene );
-    this.addToRender( ( delta: any ) => { particleAnimation( delta ); } );
+    this.debug();
   }
 
   // Place and animate the logo when loaded
@@ -49,5 +48,8 @@ export class LoadingComponent extends SceneComponent {
     this.addToRender( () => {
       model.rotation.y += 0.01;
     } );
+    this.controls.enabled = false;
+    const particleAnimation = this.particlesService.createSmoke( this.scene );
+    this.addToRender( ( delta: any ) => { particleAnimation( delta ); } );
   }
 }

@@ -3,8 +3,9 @@ import { Component, NgZone } from '@angular/core';
 import { SceneComponent } from '../scene/scene.component';
 import { LoadersService } from '../loaders.service';
 import { PrimitivesService } from '../primitives.service';
-import { Color, DirectionalLight, DirectionalLightHelper, Fog, HemisphereLight, HemisphereLightHelper, Mesh, MeshPhongMaterial, Object3D, PlaneGeometry } from 'three';
+import { Color, DirectionalLight, DirectionalLightHelper, Fog, HemisphereLight, HemisphereLightHelper, Mesh, MeshPhongMaterial, Object3D, PlaneGeometry, Vector3 } from 'three';
 import { XRService } from '../xr.service';
+import { RenderTargetService } from '../render-target.service';
 
 @Component( {
   selector: 'art-test',
@@ -14,8 +15,8 @@ import { XRService } from '../xr.service';
   styleUrl: './test.component.scss'
 } )
 export class TestComponent extends SceneComponent {
-
-  constructor( ngZone: NgZone, loadersService: LoadersService, private primitives: PrimitivesService, xrService: XRService ) {
+  man: any;
+  constructor( ngZone: NgZone, loadersService: LoadersService, private primitives: PrimitivesService, xrService: XRService, private renderTargetService: RenderTargetService ) {
     super( ngZone, loadersService, xrService );
   }
 
@@ -28,21 +29,82 @@ export class TestComponent extends SceneComponent {
     // Lights
     this.addLights();
 
-    console.log( this.camera );
+    // Render Target
+    this.createRenderTarget( {
+      width: 6,
+      height: 8,
+      position: { x: 0, y: 1, z: -3 },
+      camera: this.camera,
+      scene: this.scene,
+      renderer: this.renderer
+    } );
+    this.createRenderTarget( {
+      width: 6,
+      height: 8,
+      position: { x: -0.5, y: 1, z: -2 },
+      rotation: Math.PI / 2,
+      camera: this.camera,
+      scene: this.scene,
+      renderer: this.renderer
+    } );
 
     // Load the Man model
-    const model = this.loadersService.loadGLTF( {
+    this.man = this.loadersService.loadGLTF( {
       path: '/assets/models/man.glb',
       onLoadCB: this.onLoad.bind( this ),
     } );
 
-    // this.debug();
+  }
+
+  createRenderTarget ( ops: any ) {
+    const [targetRenderFunction, targetPlane, targetScene] = this.renderTargetService.createRenderTarget( ops );
+
+    const aLogo = this.loadersService.loadGLTF( {
+      path: 'assets/models/dark-objects.glb',
+      onLoadCB: ( model: Object3D ) => {
+        model.position.z = -5;
+        model.position.x = -2;
+        model.position.y = -2;
+        // @ts-ignore
+        targetScene.add( model );
+        console.log( 'targetScene, model ', targetScene, model );
+      }
+    } );
+
+    const man = this.loadersService.loadGLTF( {
+      path: '/assets/models/man.glb',
+      onLoadCB: ( model: Object3D ) => {
+        model.position.z = -5;
+        model.position.x = -0;
+        model.position.y = -0;
+        model.rotation.y = Math.PI / 4;
+        // @ts-ignore
+        targetScene.add( model );
+        console.log( 'targetScene, model ', targetScene, model );
+      }
+    } );
+
+    const dirLight = new DirectionalLight( 0xffffff, 3 );
+    dirLight.position.set( 3, 10, 10 );
+    dirLight.castShadow = true;
+    dirLight.shadow.camera.top = 2;
+    dirLight.shadow.camera.bottom = - 2;
+    dirLight.shadow.camera.left = - 2;
+    dirLight.shadow.camera.right = 2;
+    dirLight.shadow.camera.near = 0.1;
+    dirLight.shadow.camera.far = 40;
+    // @ts-ignore
+    targetScene.add( dirLight );
+
+    // @ts-ignore
+    this.addToRender( () => targetRenderFunction() );
+
   }
 
   addEnvironment () {
 
     // Scene background
-    // this.scene.background = new Color( 0xa0a0a0 );
+    this.scene.background = new Color( 0xa8def0 );
     // this.scene.fog = new Fog( 0xa0a0a0, 10, 50 );
 
     // ground

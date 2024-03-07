@@ -12,12 +12,12 @@ export class ParticlesService {
 
   createSmoke ( scene: any ) {
     const smokeTexture = this.loadersService.loadTexture( 'assets/textures/smoke.png' );
-    const smokeMaterial = new MeshLambertMaterial( { color: 0x00dddd, map: smokeTexture, transparent: true } );
+    const smokeMaterial = new MeshLambertMaterial( { color: 0x00ffdd, map: smokeTexture, transparent: true } );
     const smokeGeo = new PlaneGeometry( 300, 300 );
 
-    for ( let p = 0; p < 150; p++ ) {
+    for ( let p = 0; p < 80; p++ ) {
       var particle = new Mesh( smokeGeo, smokeMaterial );
-      particle.position.set( Math.random() * 500 - 250, Math.random() * 500 - 250, Math.random() * 1000 - 100 );
+      particle.position.set( Math.random() * 500 - 250, Math.random() * 500 - 250, Math.random() * 500 - 120 );
       particle.rotation.z = Math.random() * 360;
       scene.add( particle );
       this.smokeParticles.push( particle );
