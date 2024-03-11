@@ -1,12 +1,14 @@
 import { Component, NgZone } from '@angular/core';
 
-import { SceneComponent } from '../scene/scene.component';
+import { Color, DirectionalLight, DirectionalLightHelper, Fog, HemisphereLight, HemisphereLightHelper, Mesh, MeshPhongMaterial, Object3D, PlaneGeometry } from 'three';
+import TWEEN from 'three/examples/jsm/libs/tween.module.js';
+
+import { LayoutService } from '../layout.service';
 import { LoadersService } from '../loaders.service';
 import { PrimitivesService } from '../primitives.service';
-import { Color, DirectionalLight, DirectionalLightHelper, Fog, HemisphereLight, HemisphereLightHelper, Mesh, MeshPhongMaterial, Object3D, PlaneGeometry, Vector3 } from 'three';
-import { XRService } from '../xr.service';
 import { RenderTargetService } from '../render-target.service';
-import { LayoutService } from '../layout.service';
+import { SceneComponent } from '../scene/scene.component';
+import { XRService } from '../xr.service';
 
 @Component( {
   selector: 'art-test',
@@ -63,23 +65,30 @@ export class TestComponent extends SceneComponent {
     for ( let i = 0; i < 100; i++ ) {
       const box = this.primitives.createBox();
       boxes.push( box );
-      // this.addToScene( box );
+      this.addToScene( box );
     }
 
     const spheres: Object3D[] = [];
     for ( let i = 0; i < 100; i++ ) {
       const sphere = this.primitives.createSphere( {} );
       spheres.push( sphere );
-      this.addToScene( sphere );
+      // this.addToScene( sphere );
     }
 
-
-    this.layout.gridLayout( {
-      objects: spheres,
+    this.layout.sphereLayout( {
+      objects: boxes,
+      n: 4,
       width: 100,
       height: 100,
       depth: 300
     } );
+
+    // this.layout.gridLayout( {
+    //   objects: spheres,
+    //   width: 100,
+    //   height: 100,
+    //   depth: 300
+    // } );
     // @ts-ignore
     // this.addToScene( ...spheres );
     // const boxes = this.primitives.createInstancedMesh( { count: 50 } );

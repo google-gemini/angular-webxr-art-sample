@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
+import { Vector3 } from 'three';
 
 @Injectable( {
   providedIn: 'root'
 } )
 export class LayoutService {
+
+  targets = { scatter: [], sphere: [], grid: [] };
 
   constructor() { }
 
@@ -26,7 +29,18 @@ export class LayoutService {
    * Returns a sphere Layout
    * */
   sphereLayout ( ops: any ) {
+    const vector = new Vector3();
+    for ( let i = 0, l = ops.objects.length; i < l; i++ ) {
+      const object = ops.objects[i];
+      const phi = Math.acos( - 1 + ( 2 * i ) / l );
+      const theta = Math.sqrt( l * Math.PI ) * phi;
+      object.position.setFromSphericalCoords( 8, phi, theta );
 
+      vector.copy( object.position ).multiplyScalar( 2 );
+
+      object.lookAt( vector );
+      object.position.matrixWorldNeedsUpdate = true;
+    }
   }
   /**
    * 
