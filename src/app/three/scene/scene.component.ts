@@ -9,7 +9,7 @@ import {
 
 import {
   Clock,
-  Color, HemisphereLight, Object3D,
+  Color, GridHelper, HemisphereLight, Object3D,
   PerspectiveCamera, Scene,
   WebGLRenderer
 } from 'three';
@@ -190,6 +190,8 @@ export class SceneComponent {
     // this.scene.add( cube );
     // this.addToRender( () => cube.rotation.y += 0.01 );
 
+    const helper = new GridHelper( 100, 40, 0x000000, 0x000000 );
+    this.scene.add( helper );
     // GUI
     this.gui = new GUI();
     const w = window.innerWidth;

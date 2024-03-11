@@ -6,6 +6,7 @@ import { PrimitivesService } from '../primitives.service';
 import { Color, DirectionalLight, DirectionalLightHelper, Fog, HemisphereLight, HemisphereLightHelper, Mesh, MeshPhongMaterial, Object3D, PlaneGeometry, Vector3 } from 'three';
 import { XRService } from '../xr.service';
 import { RenderTargetService } from '../render-target.service';
+import { LayoutService } from '../layout.service';
 
 @Component( {
   selector: 'art-test',
@@ -16,7 +17,14 @@ import { RenderTargetService } from '../render-target.service';
 } )
 export class TestComponent extends SceneComponent {
   man: any;
-  constructor( ngZone: NgZone, loadersService: LoadersService, private primitives: PrimitivesService, xrService: XRService, private renderTargetService: RenderTargetService ) {
+  constructor(
+    ngZone: NgZone,
+    loadersService: LoadersService,
+    private primitives: PrimitivesService,
+    xrService: XRService,
+    private renderTargetService: RenderTargetService,
+    private layout: LayoutService
+  ) {
     super( ngZone, loadersService, xrService );
   }
 
@@ -30,30 +38,57 @@ export class TestComponent extends SceneComponent {
     this.addLights();
 
     // Render Target
-    this.createRenderTarget( {
-      width: 6,
-      height: 8,
-      position: { x: 0, y: 1, z: -3 },
-      camera: this.camera,
-      scene: this.scene,
-      renderer: this.renderer
-    } );
-    this.createRenderTarget( {
-      width: 6,
-      height: 8,
-      position: { x: -0.5, y: 1, z: -2 },
-      rotation: Math.PI / 2,
-      camera: this.camera,
-      scene: this.scene,
-      renderer: this.renderer
-    } );
-
+    // this.createRenderTarget( {
+    //   width: 6,
+    //   height: 8,
+    //   position: { x: 0, y: 1, z: -3 },
+    //   camera: this.camera,
+    //   scene: this.scene,
+    //   renderer: this.renderer
+    // } );
+    this.createLayout();
     // Load the Man model
     this.man = this.loadersService.loadGLTF( {
       path: '/assets/models/man.glb',
       onLoadCB: this.onLoad.bind( this ),
     } );
 
+    this.debug();
+
+  }
+
+  createLayout () {
+
+    const boxes: any[] = [];
+    for ( let i = 0; i < 100; i++ ) {
+      const box = this.primitives.createBox();
+      boxes.push( box );
+      // this.addToScene( box );
+    }
+
+    const spheres: Object3D[] = [];
+    for ( let i = 0; i < 100; i++ ) {
+      const sphere = this.primitives.createSphere( {} );
+      spheres.push( sphere );
+      this.addToScene( sphere );
+    }
+
+
+    this.layout.gridLayout( {
+      objects: spheres,
+      width: 100,
+      height: 100,
+      depth: 300
+    } );
+    // @ts-ignore
+    // this.addToScene( ...spheres );
+    // const boxes = this.primitives.createInstancedMesh( { count: 50 } );
+    // boxes.position.z = -3;
+    // this.addToScene(  );
+
+    // for ( let i = 0; i < 100; i++ ) {
+
+    // }
   }
 
   createRenderTarget ( ops: any ) {
