@@ -7,6 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 
+import GUI from 'lil-gui';
 import {
   Clock,
   Color, GridHelper, HemisphereLight, Object3D,
@@ -14,10 +15,10 @@ import {
   WebGLRenderer
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { XRButton } from 'three/examples/jsm/webxr/XRButton';
-import GUI from 'lil-gui';
 import Stats from 'three/examples/jsm/libs/stats.module';
+import { update } from 'three/examples/jsm/libs/tween.module';
 import { GPUStatsPanel } from 'three/examples/jsm/utils/GPUStatsPanel';
+import { XRButton } from 'three/examples/jsm/webxr/XRButton';
 
 import { LoadersService } from '../loaders.service';
 import { XRService } from '../xr.service';
@@ -117,6 +118,8 @@ export class SceneComponent {
     const delta = this.clock.getDelta();
     this.renderFunctions.forEach( ( f ) => f( delta ) );
     this.controls.update();
+    // Run Tween animations
+    update();
     this.renderer.render( this.scene, this.camera );
   }
 

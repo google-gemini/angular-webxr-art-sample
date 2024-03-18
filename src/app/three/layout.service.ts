@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Vector3 } from 'three';
+import { Tween, Easing } from 'three/examples/jsm/libs/tween.module';
 
 @Injectable( {
   providedIn: 'root'
@@ -18,29 +19,70 @@ export class LayoutService {
    */
   gridLayout ( ops: any ) {
     const n = ops.n || 4;
+    const duration = ops.duration || 2000;
+    const positions: any[] = [];
+    const vector = new Vector3();
     for ( let i = 0; i < ops.objects.length; i++ ) {
-      ops.objects[i].position.x = ( ( i % 5 ) * n ) - 2 * n;
-      ops.objects[i].position.y = ( - ( Math.floor( i / 5 ) % 5 ) * n ) + 2 * n;
-      ops.objects[i].position.z = ( Math.floor( i / 25 ) ) * n - 2 * n;
+
+      const object = ops.objects[i];
+
+      new Tween( object.position )
+        .to( {
+          x: ( ( i % 5 ) * n ) - 2 * n,//positions[i].x,
+          y: ( - ( Math.floor( i / 5 ) % 5 ) * n ) + 2 * n,
+          z: ( Math.floor( i / 25 ) ) * n - 2 * n
+        }, Math.random() * duration + duration )
+        .easing( Easing.Exponential.InOut )
+        .onComplete( () => {
+          object.lookAt( new Vector3() );
+        } )
+        .start();
+
+      // vector.copy( object.position ).multiplyScalar( 2 );
+
+      // TODO: no need for position since the animation is happening here. It's a good idea to bring the calculated positions here
+      positions.push( ops.objects[i].position );
+      // TODO: needs to reset the orientation, in case if it is called after sphere
     }
+
+    return positions;
   }
   /**
    * Takes number of objects and their width
    * Returns a sphere Layout
    * */
   sphereLayout ( ops: any ) {
+    const duration = ops.duration || 2000;
     const vector = new Vector3();
+    const pos = new Vector3();
+    const positions: any[] = [];
     for ( let i = 0, l = ops.objects.length; i < l; i++ ) {
       const object = ops.objects[i];
       const phi = Math.acos( - 1 + ( 2 * i ) / l );
       const theta = Math.sqrt( l * Math.PI ) * phi;
-      object.position.setFromSphericalCoords( 8, phi, theta );
+      pos.setFromSphericalCoords( 8, phi, theta );
 
-      vector.copy( object.position ).multiplyScalar( 2 );
+      positions.push( ops.objects[i].position );
 
-      object.lookAt( vector );
+      new Tween( object.position )
+        .to( {
+          x: pos.x,
+          y: pos.y,
+          z: pos.z
+        }, Math.random() * duration + duration )
+        .easing( Easing.Exponential.InOut )
+        .onComplete( () => {
+          object.lookAt( vector );
+        } )
+        .start();
+
+
       object.position.matrixWorldNeedsUpdate = true;
+
     }
+
+
+    return positions;
   }
   /**
    * 
@@ -48,17 +90,33 @@ export class LayoutService {
    * returs scattered objects 
    */
   scatterLayout ( ops: any ) {
-    let w = ops.width || window.innerWidth;
-    let h = ops.width || window.innerHeight;
-    let d = ops.depth || 200;
+    const positions: any[] = [];
+    const duration = ops.duration || 2000;
+    const n = 20;
+    let w = ops.width || window.innerWidth / n;
+    let h = ops.width || window.innerHeight / n;
+    let d = ops.depth || window.innerWidth / n;
     for ( let i = 0; i < ops.objects.length; i++ ) {
-      ops.objects[i].position.x = w * Math.random() - w / 2;
-      ops.objects[i].position.y = h * Math.random() - h / 2;
-      ops.objects[i].position.z = d * Math.random() - d / 2;
+
+      const object = ops.objects[i];
+      new Tween( object.position )
+        .to( {
+          x: w * Math.random() - w / 2,
+          y: h * Math.random() - h / 2,
+          z: d * Math.random() - d / 2
+        }, Math.random() * duration + duration )
+        .easing( Easing.Exponential.InOut )
+        .onComplete( () => {
+          object.lookAt( new Vector3() );
+        } )
+        .start();
+      // positions.push( ops.objects[i].position );
     }
+    return positions;
   }
 
   wavesLayout ( ops: any ) {
+    // const positions: any[] = [];
     let positions = [];
     let scales = [];
     let i = 0, j = 0;
@@ -79,6 +137,7 @@ export class LayoutService {
       }
 
     }
+    // return positions;
   }
 
 }
