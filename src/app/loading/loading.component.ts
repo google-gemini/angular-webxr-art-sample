@@ -10,7 +10,6 @@ import { Object3D } from 'three';
 import { LoadersService } from '../three/loaders.service';
 import { SceneComponent } from '../three/scene/scene.component';
 import { XRService } from '../three/xr.service';
-import { ParticlesService } from '../three/particles.service';
 
 @Component( {
   selector: 'art-loading',
@@ -22,7 +21,7 @@ import { ParticlesService } from '../three/particles.service';
 } )
 export class LoadingComponent extends SceneComponent {
   @Input() delta = 0;
-  constructor( ngZone: NgZone, loadersService: LoadersService, xrService: XRService, private particlesService: ParticlesService ) {
+  constructor( ngZone: NgZone, loadersService: LoadersService, xrService: XRService ) {
     super( ngZone, loadersService, xrService );
   }
 
@@ -35,7 +34,7 @@ export class LoadingComponent extends SceneComponent {
       onLoadCB: this.onLoad.bind( this ),
     } );
 
-    this.debug();
+    // this.debug();
   }
 
   // Place and animate the logo when loaded
@@ -49,7 +48,5 @@ export class LoadingComponent extends SceneComponent {
       model.rotation.y += 0.01;
     } );
     this.controls.enabled = false;
-    const particleAnimation = this.particlesService.createSmoke( this.scene );
-    this.addToRender( ( delta: any ) => { particleAnimation( delta ); } );
   }
 }

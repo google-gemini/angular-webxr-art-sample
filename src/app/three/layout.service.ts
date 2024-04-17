@@ -8,8 +8,6 @@ import { Tween, Easing } from 'three/examples/jsm/libs/tween.module';
 } )
 export class LayoutService {
 
-  targets = { scatter: [], sphere: [], grid: [] };
-
   constructor() { }
 
   /**

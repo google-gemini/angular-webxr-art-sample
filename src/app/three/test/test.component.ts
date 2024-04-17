@@ -51,30 +51,9 @@ export class TestComponent extends SceneComponent {
     // Lights
     this.addLights();
 
-    // Render Target Test
-    // this.createRenderTarget( {
-    //   width: 6,
-    //   height: 8,
-    //   position: { x: 0, y: 1, z: -3 },
-    //   camera: this.camera,
-    //   scene: this.scene,
-    //   renderer: this.renderer
-    // } );
-
-
-
-    this.debug();
-
   }
 
   createLayout () {
-
-    // const spheres: Object3D[] = [];
-    // for ( let i = 0; i < 100; i++ ) {
-    //   const sphere = this.primitives.createSphere( {} );
-    //   spheres.push( sphere );
-    //   // this.addToScene( sphere );
-    // }
 
     this.layout.sphereLayout( {
       objects: this.frames,

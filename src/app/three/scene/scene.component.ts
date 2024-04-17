@@ -37,12 +37,9 @@ export interface SceneOptions {
   styleUrl: './scene.component.scss',
 } )
 export class SceneComponent {
-  // @ts-ignore
   public camera: PerspectiveCamera;
   public clock = new Clock();
-  // @ts-ignore
   public controls: OrbitControls;
-  // @ts-ignore
   public gui: GUI | undefined;
   public scene: Scene = new Scene();
 
