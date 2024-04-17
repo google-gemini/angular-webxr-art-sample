@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+
 import { Vector3 } from 'three';
 import { Tween, Easing } from 'three/examples/jsm/libs/tween.module';
 
@@ -11,11 +12,8 @@ export class LayoutService {
 
   constructor() { }
 
-  // TODO: Sphere, Cylinder, grid, Plane, scatter, Grid, Prism Layouts
-
   /**
    * parent object is anchored to the top/middle/bottom and left/center/right of the collection. 
-   * Layout order: https://learn.microsoft.com/en-us/windows/mixed-reality/mrtk-unity/mrtk2/features/ux-building-blocks/object-collection?view=mrtkunity-2022-05#gridobjectcollection-layout-order
    */
   gridLayout ( ops: any ) {
     const n = ops.n || 4;
@@ -110,13 +108,11 @@ export class LayoutService {
           object.lookAt( new Vector3() );
         } )
         .start();
-      // positions.push( ops.objects[i].position );
     }
     return positions;
   }
 
   wavesLayout ( ops: any ) {
-    // const positions: any[] = [];
     let positions = [];
     let scales = [];
     let i = 0, j = 0;
@@ -135,9 +131,6 @@ export class LayoutService {
         j++;
 
       }
-
     }
-    // return positions;
   }
-
 }

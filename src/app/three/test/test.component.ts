@@ -1,15 +1,14 @@
 import { Component, NgZone } from '@angular/core';
 
-import { Color, DirectionalLight, DirectionalLightHelper, Fog, HemisphereLight, HemisphereLightHelper, Mesh, MeshPhongMaterial, Object3D, PlaneGeometry, Vector3 } from 'three';
-import TWEEN from 'three/examples/jsm/libs/tween.module.js';
+import { Color, DirectionalLight, DirectionalLightHelper, HemisphereLight, HemisphereLightHelper, Mesh, MeshPhongMaterial, Object3D, PlaneGeometry } from 'three';
 
+import { LayoutButtonsComponent } from '../../layout-buttons/layout-buttons.component';
 import { LayoutService } from '../layout.service';
 import { LoadersService } from '../loaders.service';
 import { PrimitivesService } from '../primitives.service';
 import { RenderTargetService } from '../render-target.service';
 import { SceneComponent } from '../scene/scene.component';
 import { XRService } from '../xr.service';
-import { LayoutButtonsComponent } from '../../layout-buttons/layout-buttons.component';
 
 @Component( {
   selector: 'art-test',

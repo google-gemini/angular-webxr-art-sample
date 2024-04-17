@@ -43,7 +43,7 @@ export class SceneComponent {
   // @ts-ignore
   public controls: OrbitControls;
   // @ts-ignore
-  public gui: GUI;
+  public gui: GUI | undefined;
   public scene: Scene = new Scene();
 
   private defaultOptions: SceneOptions = {
@@ -117,7 +117,7 @@ export class SceneComponent {
   render () {
     const delta = this.clock.getDelta();
     this.renderFunctions.forEach( ( f ) => f( delta ) );
-    this.controls.update();
+    this.controls?.update();
     // Run Tween animations
     update();
     this.renderer.render( this.scene, this.camera );

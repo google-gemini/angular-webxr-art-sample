@@ -1,9 +1,8 @@
 import { Component, Input } from '@angular/core';
 
-import { Easing, Tween } from 'three/examples/jsm/libs/tween.module';
-import { LayoutService } from '../three/layout.service';
 import { Object3D } from 'three';
 
+import { LayoutService } from '../three/layout.service';
 
 @Component( {
   selector: 'art-layout-buttons',

@@ -41,8 +41,8 @@ export class GalleryComponent extends SceneComponent {
     this.scene.add( floor );
 
     this.debug();
-    const floorG = this.gui.addFolder( 'Floor Rotation' );
-    floorG.add( floor.rotation, 'x', 0, 180, 10 );
+    const floorG = this.gui?.addFolder( 'Floor Rotation' );
+    floorG?.add( floor.rotation, 'x', 0, 180, 10 );
 
   }
 
