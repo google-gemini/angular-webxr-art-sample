@@ -1,0 +1,9 @@
+<art-image-gen #gen />
+@defer (on interaction(gen);prefetch on idle) {
+<art-test />
+<!-- <art-gallery /> -->
+} @placeholder ( minimum 5s) {
+<art-loading></art-loading>
+} @error {
+<p>Failed to load the gallery</p>
+}

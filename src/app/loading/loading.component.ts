@@ -20,7 +20,6 @@ import { XRService } from '../three/xr.service';
   styleUrl: './loading.component.scss',
 } )
 export class LoadingComponent extends SceneComponent {
-  @Input() delta = 0;
   constructor( ngZone: NgZone, loadersService: LoadersService, xrService: XRService ) {
     super( ngZone, loadersService, xrService );
   }

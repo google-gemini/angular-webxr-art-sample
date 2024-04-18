@@ -1,0 +1,10 @@
+<div>
+    <p>Welcome to WebXR Generative AI Art Gallery!</p>
+    <section class="prompt">
+        <input [(ngModel)]="prompt" placeholder="Describe an artwork you would like to create" type="text" />
+        <!-- <mat-icon [hidden]="true" (click)="speechInput()" aria-hidden="false" aria-label="Microphone" fontIcon="microphone" /> -->
+        <button mat-button color="primary" [disabled]="prompt.length < 5" (click)="generateImage()">
+            Generate
+        </button>
+    </section>
+</div>
