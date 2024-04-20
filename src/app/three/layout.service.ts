@@ -49,14 +49,18 @@ export class LayoutService {
    * */
   sphereLayout ( ops: any ) {
     const duration = ops.duration || 2000;
+    let r = 8;
     const vector = new Vector3();
     const pos = new Vector3();
     const positions: any[] = [];
     for ( let i = 0, l = ops.objects.length; i < l; i++ ) {
       const object = ops.objects[i];
+
+      // x, y
       const phi = Math.acos( - 1 + ( 2 * i ) / l );
+      // z
       const theta = Math.sqrt( l * Math.PI ) * phi;
-      pos.setFromSphericalCoords( 8, phi, theta );
+      pos.setFromSphericalCoords( r, phi, theta );
 
       positions.push( ops.objects[i].position );
 
@@ -80,6 +84,56 @@ export class LayoutService {
 
     return positions;
   }
+
+  cylindricalLayout ( ops: any ) {
+
+    const duration = ops.duration || 2000;
+    let r = 8;
+    const vector = new Vector3();
+    const pos = new Vector3();
+    const positions: any[] = [];
+    for ( let i = 0, l = ops.objects.length; i < l; i++ ) {
+      const object = ops.objects[i];
+      let y;
+      let theta;
+      // TODO: paramatarize
+      if ( i < 15 ) {
+        y = 1;
+        theta = 2 * Math.PI / 15 * i;
+      }
+      if ( i < 24 && i >= 15 ) {
+        r = 7;
+        y = r / 3 + 1;
+        theta = 2 * Math.PI / 9 * ( i - 15 );
+      }
+      else if ( i >= 24 && i < 30 ) {
+        r = 6;
+        y = 2 * r / 3 + 1;
+        theta = 2 * Math.PI / 6 * ( i - 24 );
+      }
+
+      pos.setFromCylindricalCoords( r, theta, y );
+
+      positions.push( ops.objects[i].position );
+
+      new Tween( object.position )
+        .to( {
+          x: pos.x,
+          y: pos.y,
+          z: pos.z
+        }, Math.random() * duration + duration )
+        .easing( Easing.Exponential.InOut )
+        .onComplete( () => {
+          object.lookAt( vector );
+        } )
+        .start();
+
+
+      object.position.matrixWorldNeedsUpdate = true;
+    }
+    return positions;
+  }
+
   /**
    * 
    * @param ops Takes an array of objects and a range

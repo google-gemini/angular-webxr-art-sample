@@ -25,9 +25,9 @@ export class PrimitivesService {
     return mesh;
   }
 
-  createBox () {
-    const boxGeo = new BoxGeometry( 1, 1, 1 );
-    const material = new MeshNormalMaterial();//new MeshBasicMaterial( { color: 0x00ff00 } );
+  createBox ( ops: any ) {
+    const boxGeo = new BoxGeometry( ops.x, ops.y, ops.z );
+    const material = ops.material || new MeshNormalMaterial();//new MeshBasicMaterial( { color: 0x00ff00 } );
     const cube = new Mesh( boxGeo, material );
     cube.position.y = 1;
     return cube;

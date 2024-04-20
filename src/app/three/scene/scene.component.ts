@@ -2,9 +2,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  Input,
+  input, InputSignal,
   NgZone,
-  ViewChild,
+  Signal,
+  viewChild
 } from '@angular/core';
 
 import GUI from 'lil-gui';
@@ -44,26 +45,24 @@ export class SceneComponent {
   public scene: Scene = new Scene();
 
   private defaultOptions: SceneOptions = {
-    width: window.innerWidth || 800,
-    height: window.innerHeight || 600,
+    width: window.innerWidth || 900,
+    height: window.innerHeight || 400,
   };
   // @ts-ignore
   public renderer: WebGLRenderer;
   private renderFunctions: Function[] = [];
 
-  @Input( { required: false } ) options: SceneOptions = {};
-
-  @ViewChild( 'canvas', { static: true } ) canvas!: ElementRef<HTMLCanvasElement>;
-  private get canvasEl (): HTMLCanvasElement {
-    return this.canvas?.nativeElement;
-  }
+  sceneOptions: InputSignal<SceneOptions> = input( {} );
+  canvas: Signal<ElementRef<HTMLCanvasElement>> = viewChild( 'canvas' );
 
   constructor( private ngZone: NgZone, public loadersService: LoadersService, public xrService: XRService ) { }
 
   ngAfterViewInit (): void {
-    this.options = Object.assign( {}, this.defaultOptions, this.options );
-    const w = this.options.width || this.canvasEl.width;
-    const h = this.options.height || this.canvasEl.height;
+    const canvasEl = this.canvas().nativeElement;
+
+    const options = Object.assign( {}, this.defaultOptions, this.sceneOptions );
+    const w = options.width || canvasEl.width;
+    const h = options.height || canvasEl.height;
 
     // Scene background
     this.scene.background = new Color( 'black' );
@@ -75,7 +74,7 @@ export class SceneComponent {
 
     // Renderer
     this.renderer = new WebGLRenderer( {
-      canvas: this.canvasEl,
+      canvas: canvasEl,
       antialias: true,
       alpha: true,
     } );
@@ -94,7 +93,7 @@ export class SceneComponent {
     );
 
     this.afterInit();
-  }
+  };
 
   afterInit () {
     // XR 

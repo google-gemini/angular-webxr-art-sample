@@ -1643,7 +1643,7 @@
 
 "@google-cloud/vertexai@^1.1.0":
   version "1.1.0"
-  resolved "https://registry.npmjs.org/@google-cloud/vertexai/-/vertexai-1.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/@google-cloud/vertexai/-/vertexai-1.1.0.tgz#aa9f1bdd655c443fcc344146413f1097371afcba"
   integrity sha512-hfwfdlVpJ+kM6o2b5UFfPnweBcz8tgHAFRswnqUKYqLJsvKU0DDD0Z2/YKoHyAUoPJAv20qg6KlC3msNeUKUiw==
   dependencies:
     google-auth-library "^9.1.0"
