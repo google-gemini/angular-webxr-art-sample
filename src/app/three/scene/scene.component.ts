@@ -10,8 +10,10 @@ import {
 
 import GUI from 'lil-gui';
 import {
+  ACESFilmicToneMapping,
   Clock,
   Color, GridHelper, HemisphereLight, Object3D,
+  PCFSoftShadowMap,
   PerspectiveCamera, Scene,
   WebGLRenderer
 } from 'three';
@@ -41,18 +43,18 @@ export class SceneComponent {
   public camera: PerspectiveCamera;
   public clock = new Clock();
   public controls: OrbitControls;
-  public gui: GUI | undefined;
+  public gui: GUI;
   public scene: Scene = new Scene();
 
   private defaultOptions: SceneOptions = {
-    width: window.innerWidth || 900,
+    width: window.innerWidth || 800,
     height: window.innerHeight || 400,
   };
   // @ts-ignore
   public renderer: WebGLRenderer;
   private renderFunctions: Function[] = [];
 
-  sceneOptions: InputSignal<SceneOptions> = input( {} );
+  sceneOptions: InputSignal<SceneOptions> = input();
   canvas: Signal<ElementRef<HTMLCanvasElement>> = viewChild( 'canvas' );
 
   constructor( private ngZone: NgZone, public loadersService: LoadersService, public xrService: XRService ) { }
@@ -80,6 +82,11 @@ export class SceneComponent {
     } );
     this.renderer.setPixelRatio( window.devicePixelRatio );
     this.renderer.setSize( w, h );
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = PCFSoftShadowMap;
+    this.renderer.toneMapping = ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.5;
+    this.renderer.xr.enabled = true;
 
     // Lights
     this.addLight();
@@ -106,7 +113,7 @@ export class SceneComponent {
 
     // Check XR Support and determine if the session is AR or VR
     // Initiate a session if supported
-    this.xrService.checkXRSupport( this.renderer );
+    this.xrService.checkXRSupport( { renderer: this.renderer, camera: this.camera, scene: this.scene } );
   }
 
   // Render function runs on each frame

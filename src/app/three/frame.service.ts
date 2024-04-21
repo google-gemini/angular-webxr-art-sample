@@ -23,13 +23,14 @@ export class FrameService {
     canvasMaterial.map = texture;
 
     const canvas = this.primitivesService.createBox( { x: 1, y: 1, z: 0.6, material: canvasMaterial } );
+    canvas.name = `Focused Canvas`;
     return canvas;
 
   }
 
   createFrame ( artwork: Artwork ) {
     const frame = new Group();
-    frame.name = `${artwork.title} Frame`;
+    frame.name = `Focused Frame`;
 
     const canvas = this.createCanvas( artwork );
     const box = this.primitivesService.createBox( { x: 2, y: 2, z: 0.5 } );

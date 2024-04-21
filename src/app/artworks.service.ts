@@ -8,13 +8,13 @@ export class ArtworksService {
   private artworksArray: Artwork[] = [
     {
       id: 0,
-      title: "Self Portrait",
+      title: "Designer ",
       audio: "assets/audio/1.mp3",
       date: "1887",
       description:
         "This self-portrait was one of about 32 produced over a 10-year period, and these were an important part of his work as a painter; he painted himself because he often lacked the money to pay for models. Art historians are divided as to whether this painting is Van Gogh's final self-portrait or not. It is considered that it was painted in Arles following Van Gogh's admission to hospital after mutilating his ear. Van Gogh sent the picture to his younger brother, the art dealer Theo; an accompanying letter read: 'I hope you will notice that my facial expressions have become much calmer, although my eyes have the same insecure look as before, or so it appears to me.'",
       height: 65,
-      url: "assets/artworks/Designer_0.webp",
+      url: "assets/artworks/Designer.webp",
       votes: 0,
       width: 54,
       wiki: "https://wikipedia.org/wiki/Van_Gogh_self-portrait_(1889)",
@@ -178,6 +178,10 @@ export class ArtworksService {
     artwork.id = this.artworksArray.length;
     this.focusedArtwork.set( artwork );
     this.artworksArray.push( artwork );
+  }
+
+  setFocusedArtwork () {
+
   }
 }
 
