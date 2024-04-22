@@ -46,6 +46,7 @@ export class FrameService {
     const frame = new Group();
     frame.name = 'Small frame group';
     const box = this.primitivesService.createBox( { x: 2, y: 2, z: 0.3 } );
+
     const canvas = this.createCanvas( { artwork: ops.artwork, x: 1, y: 1, z: 0.35 } );
     frame.add( box, canvas );
 
