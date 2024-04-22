@@ -90,14 +90,21 @@ export class TestComponent extends SceneComponent {
   }
 
   createLayout () {
-
-    this.layout.sphereLayout( {
+    this.layout.cylindricalLayout( {
       objects: this.frames,
       n: 4,
       width: 100,
       height: 100,
       depth: 300
+
     } );
+    // this.layout.sphereLayout( {
+    //   objects: this.frames,
+    //   n: 4,
+    //   width: 100,
+    //   height: 100,
+    //   depth: 300
+    // } );
   }
 
   createBoxes () {

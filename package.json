@@ -2,10 +2,10 @@
   "name": "angular-webxr-gallery",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
+    "ng": "./node_modules/@angular/cli/bin/ng.js",
     "start": "ng serve",
     "build": "ng build",
-    "deploy": "ng deploy",
+    "deploy": "yarn install && ng build",
     "watch": "ng build --watch --configuration development",
     "comp": "ng g component",
     "serv": "ng g service",
