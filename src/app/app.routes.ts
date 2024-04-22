@@ -27,7 +27,7 @@ export const routes: Routes = [
     },
     {
         path: '',
-        redirectTo: '/imagegen',
+        redirectTo: '/gallery',
         pathMatch: 'full'
     }
 ];

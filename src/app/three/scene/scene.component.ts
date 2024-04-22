@@ -18,10 +18,10 @@ import {
   WebGLRenderer
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import Stats from 'three/examples/jsm/libs/stats.module';
-import { update } from 'three/examples/jsm/libs/tween.module';
-import { GPUStatsPanel } from 'three/examples/jsm/utils/GPUStatsPanel';
-import { XRButton } from 'three/examples/jsm/webxr/XRButton';
+import Stats from 'three/examples/jsm/libs/stats.module.js';
+import { update } from 'three/examples/jsm/libs/tween.module.js';
+import { GPUStatsPanel } from 'three/examples/jsm/utils/GPUStatsPanel.js';
+import { XRButton } from 'three/examples/jsm/webxr/XRButton.js';
 
 import { LoadersService } from '../loaders.service';
 import { XRService } from '../xr.service';

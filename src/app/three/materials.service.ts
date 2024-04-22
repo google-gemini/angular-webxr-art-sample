@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Color } from 'three';
-import { mix, range, normalWorld, oscSine, timerLocal } from 'three/examples/jsm/nodes/nodes.js';
+import { range } from 'three/examples/jsm/nodes/nodes.js';
 
 @Injectable( {
   providedIn: 'root'

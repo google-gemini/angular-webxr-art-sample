@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Vector3 } from 'three';
-import { Tween, Easing } from 'three/examples/jsm/libs/tween.module';
+import { Tween, Easing } from 'three/examples/jsm/libs/tween.module.js';
 
 @Injectable( {
   providedIn: 'root'

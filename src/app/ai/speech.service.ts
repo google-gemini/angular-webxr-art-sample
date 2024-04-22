@@ -23,9 +23,9 @@ export class SpeechService {
     } );
   }
 
-  say ( text: string, lang: string ): Promise<void> {
+  say ( text: string, lang?: string ): Promise<void> {
     const utterance = new SpeechSynthesisUtterance( text );
-    utterance.lang = lang;
+    utterance.lang = lang || 'en-US';
     return new Promise( ( resolve ) => {
       utterance.onend = () => resolve();
       speechSynthesis.speak( utterance );

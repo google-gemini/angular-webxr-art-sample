@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
-import { BoxGeometry, DynamicDrawUsage, InstancedMesh, Mesh, MeshBasicMaterial, MeshNormalMaterial, MeshPhongMaterial, PlaneGeometry, SphereGeometry } from 'three';
+
+import { BoxGeometry, CanvasTexture, InstancedMesh, Mesh, MeshBasicMaterial, MeshNormalMaterial, MeshPhongMaterial, MeshPhysicalMaterial, PlaneGeometry, RepeatWrapping, SphereGeometry, Vector2 } from 'three';
+import { FlakesTexture } from 'three/examples/jsm/textures/FlakesTexture.js';
 
 @Injectable( {
   providedIn: 'root'
@@ -27,7 +29,22 @@ export class PrimitivesService {
 
   createBox ( ops: any ) {
     const boxGeo = new BoxGeometry( ops.x, ops.y, ops.z );
-    const material = ops.material || new MeshNormalMaterial();//new MeshBasicMaterial( { color: 0x00ff00 } );
+    const normalMap3 = new CanvasTexture( new FlakesTexture() );
+    normalMap3.wrapT = RepeatWrapping;
+    normalMap3.wrapS = RepeatWrapping;
+    normalMap3.repeat.x = 50;
+    normalMap3.repeat.y = 30;
+    normalMap3.anisotropy = 16;
+    let material = ops.material || new MeshPhysicalMaterial( {
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.1,
+      metalness: 0.9,
+      roughness: 0.5,
+      color: 0x00ffff,
+      normalMap: normalMap3,
+      normalScale: new Vector2( 0.15, 0.15 )
+    } );
+    //const material = ops.material || new MeshStandardMaterial( { color: 0xffffff, roughness: 0, metalness: 0 } );//new MeshNormalMaterial();//new MeshBasicMaterial( { color: 0x00ff00 } );
     const cube = new Mesh( boxGeo, material );
     cube.position.y = 1;
     return cube;

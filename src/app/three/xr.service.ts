@@ -1,6 +1,9 @@
 import { Injectable, signal, WritableSignal } from '@angular/core';
-import { AdditiveBlending, BufferGeometry, Float32BufferAttribute, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, Ray, RingGeometry, Vector3, WebGLRenderer } from 'three';
+
 import * as m from 'gl-matrix';
+import { AdditiveBlending, BufferGeometry, Float32BufferAttribute, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, Ray, RingGeometry, Vector3, WebGLRenderer } from 'three';
+import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory.js';
+
 
 @Injectable( {
   providedIn: 'root'
@@ -54,6 +57,7 @@ export class XRService {
   // Initiate an XR session 
   initXR ( ops: any ) {
     this.renderer = ops.renderer;
+    this.scene = ops.scene;
     this.webXRManager = ops.renderer.xr;
     // console.log( 'webXRManager ', this.webXRManager );
     this.webXRManager.enabled = true;
@@ -147,8 +151,8 @@ export class XRService {
 
   onSelect ( e: Event ) {
     console.log( 'Select VR event ', e );
-    this.interactions.intersectObjects( { controller: this.controllerLeft, scene: this.scene, select: true } );
-    this.interactions.intersectObjects( { controller: this.controllerRight, scene: this.scene, select: true } );
+    // this.interactions.intersectObjects( { controller: this.controllerLeft, scene: this.scene, select: true } );
+    // this.interactions.intersectObjects( { controller: this.controllerRight, scene: this.scene, select: true } );
   }
 
   onSelectEnd ( e: any ) {

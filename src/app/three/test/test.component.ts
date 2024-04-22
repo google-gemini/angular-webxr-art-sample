@@ -1,16 +1,20 @@
-import { Component, inject, input, InputSignal, NgZone } from '@angular/core';
+import { Component, effect, inject, input, InputSignal, NgZone } from '@angular/core';
 
-import { Color, DirectionalLight, DirectionalLightHelper, HemisphereLight, HemisphereLightHelper, Mesh, MeshPhongMaterial, Object3D, PlaneGeometry } from 'three';
+import { BoxGeometry, DirectionalLight, Group, Mesh, MeshStandardMaterial, Object3D, RectAreaLight } from 'three';
+import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper.js';
+import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
 
+import { animate, easeInOut } from 'popmotion';
+
+import { Artwork, ArtworksService } from '../../artworks.service';
 import { LayoutButtonsComponent } from '../../layout-buttons/layout-buttons.component';
+import { FrameService } from '../frame.service';
 import { LayoutService } from '../layout.service';
 import { LoadersService } from '../loaders.service';
 import { PrimitivesService } from '../primitives.service';
 import { RenderTargetService } from '../render-target.service';
 import { SceneComponent } from '../scene/scene.component';
 import { XRService } from '../xr.service';
-import { FrameService } from '../frame.service';
-import { Artwork, ArtworksService } from '../../artworks.service';
 
 @Component( {
   selector: 'art-test',
@@ -24,9 +28,10 @@ export class TestComponent extends SceneComponent {
   frames: Object3D[] = [];
   private frameService = inject( FrameService );
   private artworksService = inject( ArtworksService );
-
+  private artworks = this.artworksService.artworks();
   fa: InputSignal<Artwork> = input.required();
   focusArtwork = this.artworksService.getFocusedArtwork();
+  private focusedFrame: any;
 
   constructor(
     ngZone: NgZone,
@@ -35,10 +40,14 @@ export class TestComponent extends SceneComponent {
     xrService: XRService,
     private renderTargetService: RenderTargetService,
     private layout: LayoutService
+
   ) {
     super( ngZone, loadersService, xrService );
+    effect( () => {
+      console.log( `The current focused is: ${this.fa().url}` );
+      this.frameService.updateFrame( { texture: this.fa().url, frame: this.focusedFrame } );
+    } );
   }
-
 
   ngOnInit () {
 
@@ -46,18 +55,12 @@ export class TestComponent extends SceneComponent {
     this.createBoxes();
 
   }
+
   override ngAfterViewInit (): void {
     super.ngAfterViewInit();
 
     // Focus frame
     this.focusFrame();
-
-
-    // Load the Man model
-    this.man = this.loadersService.loadGLTF( {
-      path: '/assets/models/man.glb',
-      onLoadCB: this.onLoad.bind( this ),
-    } );
 
     // Environment
     this.addEnvironment();
@@ -69,10 +72,21 @@ export class TestComponent extends SceneComponent {
 
   focusFrame () {
     this.focusArtwork = this.artworksService.getFocusedArtwork();
-    const focusedFrame =
-      this.frameService.createFrame( this.focusArtwork );
-    focusedFrame.position.z = -4;
+    const focusedFrame = this.frameService.createFrame( this.focusArtwork );
+    focusedFrame.position.z = -10;
     this.scene.add( focusedFrame );
+
+    animate( {
+      from: focusedFrame.position.z,
+      to: -4,
+      duration: 3000,
+      ease: easeInOut,
+      onUpdate: latest => focusedFrame.position.z = latest,
+      onComplete: () => this.addMan()
+    } );
+
+    this.focusedFrame = focusedFrame;
+
   }
 
   createLayout () {
@@ -92,8 +106,14 @@ export class TestComponent extends SceneComponent {
     let h = 600 / n;
     let d = 800 / n;
     const boxes: Object3D[] = [];
+    const artworks = this.artworksService.artworks();
+    // this.frameService.createSmallFrame();
     for ( let i = 0; i < 30; i++ ) {
+
+      // const box = this.frameService.createSmallFrame( { artwork: artworks[i] } );
+      //
       const box = this.primitives.createBox( { x: 2, y: 2, z: 0.5 } );
+
       box.position.x = w * Math.random() - w / 2;
       box.position.y = h * Math.random() - h / 2;
       box.position.z = d * Math.random() - d / 2;
@@ -103,17 +123,19 @@ export class TestComponent extends SceneComponent {
 
     this.frames = boxes;
 
-    // this.addToRender( () => {
-    //   // const vec = new Vector3();
-    //   this.frames.forEach( ( obj ) => {
-    //     obj.lookAt( this.camera.position );
-    //   } );
-    // } );
-
-
     setTimeout( () => {
       this.createLayout();
     }, 500 );
+
+
+  }
+
+  addMan () {
+    // Load the Man model
+    this.man = this.loadersService.loadGLTF( {
+      path: '/assets/models/man.glb',
+      onLoadCB: this.onLoad.bind( this ),
+    } );
 
   }
 
@@ -165,42 +187,71 @@ export class TestComponent extends SceneComponent {
   addEnvironment () {
 
     // Scene background
-    this.scene.background = new Color( 0xa8def0 );
+    // this.scene.background = new Color( 0xa8def0 );
     // this.scene.fog = new Fog( 0xa0a0a0, 10, 50 );
 
-    // ground
-    const mesh = new Mesh( new PlaneGeometry( 20, 20 ), new MeshPhongMaterial( { color: 0xcbcbcb, depthWrite: false } ) );
-    mesh.rotation.x = - Math.PI / 2;
-    mesh.receiveShadow = true;
-    this.scene.add( mesh );
+    // // ground
+    // const mesh = new Mesh( new PlaneGeometry( 20, 20 ), new MeshPhongMaterial( { color: 0xcbcbcb, depthWrite: false } ) );
+    // mesh.rotation.x = - Math.PI / 2;
+    // mesh.receiveShadow = true;
+    // this.scene.add( mesh );
+
+    // Floor
+    const geoFloor = new BoxGeometry( 2000, 0.1, 2000 );
+    const matStdFloor = new MeshStandardMaterial( { color: 0xfffff, roughness: 0.1, metalness: 0 } );
+    const mshStdFloor = new Mesh( geoFloor, matStdFloor );
+    this.scene.add( mshStdFloor );
   }
 
   addLights () {
-    const hemiLight = new HemisphereLight( 0xffffff, 0x8d8d8d, 3 );
-    hemiLight.position.set( 0, 20, 0 );
+    // Hemlight
+    // const hemiLight = new HemisphereLight( 0xffffff, 0x8d8d8d, 3 );
+    // hemiLight.position.set( 0, 20, 0 );
 
-    const hHelper = new HemisphereLightHelper( hemiLight, 5, 'orange' );
-    this.scene.add( hemiLight, hHelper );
+    // const hHelper = new HemisphereLightHelper( hemiLight, 5, 'orange' );
+    // this.scene.add( hemiLight );
 
-    const dirLight = new DirectionalLight( 0xffffff, 3 );
-    dirLight.position.set( 3, 10, 10 );
-    dirLight.castShadow = true;
-    dirLight.shadow.camera.top = 2;
-    dirLight.shadow.camera.bottom = - 2;
-    dirLight.shadow.camera.left = - 2;
-    dirLight.shadow.camera.right = 2;
-    dirLight.shadow.camera.near = 0.1;
-    dirLight.shadow.camera.far = 40;
+    // // Directional Lights
+    // const dirLight = new DirectionalLight( 0xffffff, 3 );
+    // dirLight.position.set( 3, 10, 10 );
+    // dirLight.castShadow = true;
+    // dirLight.shadow.camera.top = 2;
+    // dirLight.shadow.camera.bottom = - 2;
+    // dirLight.shadow.camera.left = - 2;
+    // dirLight.shadow.camera.right = 2;
+    // dirLight.shadow.camera.near = 0.1;
+    // dirLight.shadow.camera.far = 40;
 
-    const dHelper = new DirectionalLightHelper( dirLight, 5, );
-    this.scene.add( dirLight, dHelper );
+    // const dHelper = new DirectionalLightHelper( dirLight, 5, );
+    // this.scene.add( dirLight );
 
 
-    const light = new DirectionalLight();
-    light.position.set( 0.2, 1.5, -2 );
+    // const light = new DirectionalLight();
+    // light.position.set( 0.2, 1.5, -2 );
 
-    const helper = new DirectionalLightHelper( light, 5, 'red' );
-    this.scene.add( light, helper );
+    // const helper = new DirectionalLightHelper( light, 5, 'red' );
+    // this.scene.add( light );
+
+    // Area Lights
+    RectAreaLightUniformsLib.init();
+    const rectLights = new Group();
+    const rectLight1 = new RectAreaLight( 0xff0000, 5, 4, 10 );
+    rectLight1.position.set( - 5, 5, -5 );
+    rectLights.add( rectLight1 );
+
+    const rectLight2 = new RectAreaLight( 0x00ff00, 5, 4, 10 );
+    rectLight2.position.set( 0, 5, -5 );
+    rectLights.add( rectLight2 );
+
+    const rectLight3 = new RectAreaLight( 0x0000ff, 5, 4, 10 );
+    rectLight3.position.set( 5, 5, -5 );
+    rectLights.add( rectLight3 );
+    // rectLights.rotation.y = Math.PI;
+    rectLights.position.z = 15;
+    this.scene.add( rectLights );
+    this.scene.add( new RectAreaLightHelper( rectLight1 ) );
+    this.scene.add( new RectAreaLightHelper( rectLight2 ) );
+    this.scene.add( new RectAreaLightHelper( rectLight3 ) );
   }
 
   onLoad ( model: Object3D ) {
