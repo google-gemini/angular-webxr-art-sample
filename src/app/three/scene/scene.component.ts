@@ -26,6 +26,7 @@ import { XRButton } from 'three/examples/jsm/webxr/XRButton.js';
 import { LoadersService } from '../loaders.service';
 import { XRService } from '../xr.service';
 
+
 export interface SceneOptions {
   width?: number;
   height?: number;
@@ -68,11 +69,13 @@ export class SceneComponent {
 
     // Scene background
     this.scene.background = new Color( 'black' );
-
+    this.scene.backgroundBlurriness = 0.3;
+    // this.scene.fog = new Fog( 0x20F0A0, 0.1, 100 );
     // Camera
     this.camera = new PerspectiveCamera( 45, w / h, 0.1, 500 );
     this.camera.position.set( 0, 1.6, 0 );
     this.scene.add( this.camera );
+
 
     // Renderer
     this.renderer = new WebGLRenderer( {

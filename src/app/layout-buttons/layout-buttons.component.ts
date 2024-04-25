@@ -12,7 +12,7 @@ import { LayoutService } from '../three/layout.service';
   styleUrl: './layout-buttons.component.scss'
 } )
 export class LayoutButtonsComponent {
-  layouts: any[] = [{ name: 'scatter', positions: [] }, { name: 'grid', positions: [] }, { name: 'sphere', positions: [] }];
+  layouts: any[] = [{ name: 'scatter', positions: [] }, { name: 'grid', positions: [] }, { name: 'sphere', positions: [] }, { name: 'cylinder', positions: [] }];
 
   constructor( private layoutService: LayoutService ) { }
 
@@ -35,6 +35,15 @@ export class LayoutButtonsComponent {
         break;
       case 'sphere':
         positions = this.layoutService.sphereLayout( {
+          objects: this.objects,
+          n: 4,
+          width: 100,
+          height: 100,
+          depth: 300
+        } );
+        break;
+      case 'sphere':
+        positions = this.layoutService.cylindricalLayout( {
           objects: this.objects,
           n: 4,
           width: 100,
