@@ -25,7 +25,7 @@ export class MuseumComponent {
   addArtwork ( artwork: Artwork ) {
     this.focusArtwork.set( artwork );
     this.artworksService.addArtwork( artwork );
-    this.speechService.say( artwork.description );
+    // this.speechService.say( artwork.description );
   }
 
 }

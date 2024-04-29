@@ -13,15 +13,29 @@ import { SpeechService } from '../speech.service';
   styleUrl: './image-gen.component.scss'
 } )
 export class ImageGenComponent {
-  protected prompt = '';
+  prompt = '';//"Describe the image and tell me what makes this artwork beautiful";
+  question: string = '';// "a woman wearing kimono looking into the camera with bright colors";
   private speech = inject( SpeechService );
   private generative = inject( GenerativeService );
 
   newArtworkEvent = output<Artwork>();
-  async generateImage () {
-    console.log( 'Querying the model with prompt', this.prompt );
-    const generatedImage: Artwork = await this.generative.generateImage( this.prompt );
-    this.newArtworkEvent.emit( generatedImage );
+
+  genImage () {
+    this.prompt = this.prompt == '' ? 'a woman wearing kimono looking into the camera with bright colors' : this.prompt;
+    this.question = this.question == '' ? 'Describe the image and tell me what makes this artwork beautiful' : this.question;
+    this.generative.generateImage( { prompt: this.prompt, question: this.question } ).subscribe( ( response ) => {
+      console.log( response );
+      const image = {
+        // @ts-expect-error
+        url: `data:image/png;base64,${response.image}`,
+        // @ts-expect-error
+        description: response.caption
+      };
+
+      this.newArtworkEvent.emit( image );
+
+    } );
+
   }
 
   // TODO

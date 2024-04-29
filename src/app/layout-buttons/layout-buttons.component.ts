@@ -42,7 +42,7 @@ export class LayoutButtonsComponent {
           depth: 300
         } );
         break;
-      case 'sphere':
+      case 'cylinder':
         positions = this.layoutService.cylindricalLayout( {
           objects: this.objects,
           n: 4,
