@@ -3,6 +3,7 @@ import { LoadingComponent } from './loading/loading.component';
 import { TestComponent } from './three/test/test.component';
 import { ImageGenComponent } from './ai/image-gen/image-gen.component';
 import { MuseumComponent } from './museum/museum.component';
+import { GalleryComponent } from './gallery/gallery.component';
 
 export const routes: Routes = [
     {
@@ -11,8 +12,13 @@ export const routes: Routes = [
         title: 'Loading'
     },
     {
-        path: 'gallery',
+        path: 'museum',
         component: MuseumComponent,
+        title: 'WebXR Museum'
+    },
+    {
+        path: 'gallery',
+        component: GalleryComponent,
         title: 'WebXR Gallery'
     },
     {
@@ -27,7 +33,7 @@ export const routes: Routes = [
     },
     {
         path: '',
-        redirectTo: '/gallery',
+        redirectTo: '/museum',
         pathMatch: 'full'
     }
 ];

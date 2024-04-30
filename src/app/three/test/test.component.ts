@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, InputSignal, NgZone } from '@angular/core';
+import { Component, effect, inject, input, InputSignal } from '@angular/core';
 
 import { BoxGeometry, DirectionalLight, Group, Mesh, MeshStandardMaterial, Object3D, RectAreaLight } from 'three';
 import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper.js';
@@ -10,11 +10,8 @@ import { Artwork, ArtworksService } from '../../artworks.service';
 import { LayoutButtonsComponent } from '../../layout-buttons/layout-buttons.component';
 import { FrameService } from '../frame.service';
 import { LayoutService } from '../layout.service';
-import { LoadersService } from '../loaders.service';
-import { PrimitivesService } from '../primitives.service';
 import { RenderTargetService } from '../render-target.service';
 import { SceneComponent } from '../scene/scene.component';
-import { XRService } from '../xr.service';
 
 @Component( {
   selector: 'art-test',
@@ -24,25 +21,21 @@ import { XRService } from '../xr.service';
   styleUrl: './test.component.scss'
 } )
 export class TestComponent extends SceneComponent {
+  // Services
+  private artworksService = inject( ArtworksService );
+  private frameService = inject( FrameService );
+  private layout: LayoutService = inject( LayoutService );
+  private renderTargetService: RenderTargetService = inject( RenderTargetService );
+  public fa: InputSignal<Artwork> = input.required();
+
   man: any;
   frames: Object3D[] = [];
-  private frameService = inject( FrameService );
-  private artworksService = inject( ArtworksService );
   private artworks = this.artworksService.artworks();
-  fa: InputSignal<Artwork> = input.required();
   focusArtwork = this.artworksService.getFocusedArtwork();
   private focusedFrame: any;
 
-  constructor(
-    ngZone: NgZone,
-    loadersService: LoadersService,
-    private primitives: PrimitivesService,
-    xrService: XRService,
-    private renderTargetService: RenderTargetService,
-    private layout: LayoutService
-
-  ) {
-    super( ngZone, loadersService, xrService );
+  constructor() {
+    super();
     effect( () => {
       console.log( `The current focused is: ${this.fa().url}` );
       this.frameService.updateFrame( { texture: this.fa().url, frame: this.focusedFrame } );
@@ -72,7 +65,7 @@ export class TestComponent extends SceneComponent {
 
   focusFrame () {
     this.focusArtwork = this.artworksService.getFocusedArtwork();
-    const focusedFrame = this.frameService.createFrame( this.focusArtwork );
+    const focusedFrame = this.frameService.createFocusFrame( this.focusArtwork );
     focusedFrame.position.z = -10;
     this.scene.add( focusedFrame );
 

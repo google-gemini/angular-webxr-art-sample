@@ -4,7 +4,7 @@ import { Injectable, signal, WritableSignal } from '@angular/core';
   providedIn: 'root'
 } )
 export class ArtworksService {
-  // TODO: change to signal
+
   private artworksArray: Artwork[] = [
     {
       id: 0,
@@ -14,7 +14,7 @@ export class ArtworksService {
       description:
         "This self-portrait was one of about 32 produced over a 10-year period, and these were an important part of his work as a painter; he painted himself because he often lacked the money to pay for models. Art historians are divided as to whether this painting is Van Gogh's final self-portrait or not. It is considered that it was painted in Arles following Van Gogh's admission to hospital after mutilating his ear. Van Gogh sent the picture to his younger brother, the art dealer Theo; an accompanying letter read: 'I hope you will notice that my facial expressions have become much calmer, although my eyes have the same insecure look as before, or so it appears to me.'",
       height: 65,
-      url: "assets/artworks/Designer.webp",
+      url: "assets/artworks/Designer_1.webp",
       votes: 0,
       width: 54,
       wiki: "https://wikipedia.org/wiki/Van_Gogh_self-portrait_(1889)",
@@ -66,7 +66,7 @@ export class ArtworksService {
       description:
         "In mid-March 1888 van Gogh writes that the almond trees are coming into full flower, weather there is changeable, often windy with turbulent skies. Later on Theo wrote to his brother Vincent on January 31, 1890, to announce the birth of his son, Vincent Willem van Gogh. He was very close to his brother and he sought to symbolize new life in the flowers of the almond tree for the birth of baby Vincent.",
       height: 73.5,
-      url: "assets/artworks/Designer_1.webp",
+      url: "assets/artworks/Designer.webp",
       votes: 34,
       width: 92,
       colors: [
@@ -550,12 +550,22 @@ export class ArtworksService {
   ];
 
   public artworks = signal( this.artworksArray );
-  public focusedArtwork = signal( this.artworksArray[2] );
+  public focusedArtwork = signal( this.artworksArray[0] );
 
   getFocusedArtwork () {
     return this.focusedArtwork();
   }
 
+  getArtworks () {
+    return this.artworks;
+  }
+
+  // For multiple image creation at once
+  updateArtworks ( artworks: Artwork[] ) {
+    this.artworks.set( artworks );
+  }
+
+  // For test component single image gen case
   addArtwork ( artwork: Artwork ) {
     artwork.id = this.artworksArray.length;
     this.focusedArtwork.set( artwork );
@@ -563,6 +573,7 @@ export class ArtworksService {
   }
 
   setFocusedArtwork ( artwork: Artwork ) {
+    this.focusedArtwork.set( artwork );
   }
 }
 

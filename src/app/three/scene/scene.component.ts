@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  inject,
   input, InputSignal,
   NgZone,
   Signal,
@@ -12,7 +13,7 @@ import GUI from 'lil-gui';
 import {
   ACESFilmicToneMapping,
   Clock,
-  Color, GridHelper, HemisphereLight, Object3D,
+  Color, Fog, GridHelper, HemisphereLight, Object3D,
   PCFSoftShadowMap,
   PerspectiveCamera, Scene,
   WebGLRenderer
@@ -41,6 +42,11 @@ export interface SceneOptions {
   styleUrl: './scene.component.scss',
 } )
 export class SceneComponent {
+  // Services to inject
+  private ngZone: NgZone = inject( NgZone );
+  protected loadersService = inject( LoadersService );
+  protected xrService = inject( XRService );
+
   public camera: PerspectiveCamera;
   public clock = new Clock();
   public controls: OrbitControls;
@@ -51,14 +57,12 @@ export class SceneComponent {
     width: window.innerWidth || 800,
     height: window.innerHeight || 400,
   };
-  // @ts-ignore
+
   public renderer: WebGLRenderer;
   private renderFunctions: Function[] = [];
 
   sceneOptions: InputSignal<SceneOptions> = input();
   canvas: Signal<ElementRef<HTMLCanvasElement>> = viewChild( 'canvas' );
-
-  constructor( private ngZone: NgZone, public loadersService: LoadersService, public xrService: XRService ) { }
 
   ngAfterViewInit (): void {
     const canvasEl = this.canvas().nativeElement;
@@ -70,7 +74,8 @@ export class SceneComponent {
     // Scene background
     this.scene.background = new Color( 'black' );
     this.scene.backgroundBlurriness = 0.3;
-    // this.scene.fog = new Fog( 0x20F0A0, 0.1, 100 );
+
+
     // Camera
     this.camera = new PerspectiveCamera( 45, w / h, 0.1, 500 );
     this.camera.position.set( 0, 1.6, 0 );
@@ -150,6 +155,7 @@ export class SceneComponent {
   addControls () {
     this.controls = new OrbitControls( this.camera, this.renderer.domElement );
     this.controls.listenToKeyEvents( window ); // optional
+
     // Set the controls target to the camera/user position
     this.controls.target.set( 0, 1.6, -5 );
     this.controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
@@ -189,18 +195,19 @@ export class SceneComponent {
     this.scene.add( ambient );
   }
 
-  debug () {
+  fog ( ops?: any ) {
 
-    // Add a cube to the scene for testing purposes
-    // const boxGeo = new BoxGeometry( 10, 10, 10 );
-    // const material = new MeshBasicMaterial( { color: 0x00ff00 } );
-    // const cube = new Mesh( boxGeo, material );
-    // cube.position.y = 10;
-    // this.scene.add( cube );
-    // this.addToRender( () => cube.rotation.y += 0.01 );
+    // Heavy fog
+    const setcolor = 0xF02050;
+    this.scene.background = new Color( setcolor );
+    this.scene.fog = new Fog( setcolor, 12, 20 );
+  }
+
+  debug () {
 
     const helper = new GridHelper( 100, 40, 0x000000, 0x000000 );
     this.scene.add( helper );
+
     // GUI
     this.gui = new GUI();
     const w = window.innerWidth;
@@ -209,11 +216,11 @@ export class SceneComponent {
     camera.add( this.camera.position, 'y', 0, 2, 0.1 );
     camera.add( this.camera.position, 'z', 0, 10, 1 );
 
-    // Stats
-
+    // Stats panel
     const stats = new Stats();
     document.body.appendChild( stats.dom );
 
+    // Perf panel
     const gpuPanel = new GPUStatsPanel( this.renderer.getContext() );
     stats.addPanel( gpuPanel );
     stats.showPanel( 0 );
