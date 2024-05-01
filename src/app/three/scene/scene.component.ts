@@ -16,6 +16,7 @@ import {
   Color, Fog, GridHelper, HemisphereLight, Object3D,
   PCFSoftShadowMap,
   PerspectiveCamera, Scene,
+  Vector2,
   WebGLRenderer
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -26,6 +27,8 @@ import { XRButton } from 'three/examples/jsm/webxr/XRButton.js';
 
 import { LoadersService } from '../loaders.service';
 import { XRService } from '../xr.service';
+import { InteractionsService } from '../interactions.service';
+import { LightsService } from '../lights.service';
 
 
 export interface SceneOptions {
@@ -43,8 +46,10 @@ export interface SceneOptions {
 } )
 export class SceneComponent {
   // Services to inject
-  private ngZone: NgZone = inject( NgZone );
+  protected interactions = inject( InteractionsService );
+  protected lightsService = inject( LightsService );
   protected loadersService = inject( LoadersService );
+  private ngZone: NgZone = inject( NgZone );
   protected xrService = inject( XRService );
 
   public camera: PerspectiveCamera;
@@ -63,6 +68,9 @@ export class SceneComponent {
 
   sceneOptions: InputSignal<SceneOptions> = input();
   canvas: Signal<ElementRef<HTMLCanvasElement>> = viewChild( 'canvas' );
+  rect: DOMRect;
+  private pointer = new Vector2();
+
 
   ngAfterViewInit (): void {
     const canvasEl = this.canvas().nativeElement;
@@ -75,7 +83,6 @@ export class SceneComponent {
     this.scene.background = new Color( 'black' );
     this.scene.backgroundBlurriness = 0.3;
 
-
     // Camera
     this.camera = new PerspectiveCamera( 45, w / h, 0.1, 500 );
     this.camera.position.set( 0, 1.6, 0 );
@@ -86,6 +93,7 @@ export class SceneComponent {
     this.renderer = new WebGLRenderer( {
       canvas: canvasEl,
       antialias: true,
+      powerPreference: "high-performance",
       alpha: true,
     } );
     this.renderer.setPixelRatio( window.devicePixelRatio );
@@ -96,11 +104,16 @@ export class SceneComponent {
     this.renderer.toneMappingExposure = 1.5;
     this.renderer.xr.enabled = true;
 
+    this.rect = this.renderer.domElement.getBoundingClientRect();
     // Lights
-    this.addLight();
+    this.addLights();
 
     // Controls
     this.addControls();
+
+    // Interactions Manager
+    const interactionsUpdate = this.interactions.initInteractionManager( this.renderer, this.camera, canvasEl );
+    this.renderFunctions.push( interactionsUpdate );
 
     // Animation Loop
     this.ngZone.runOutsideAngular( () =>
@@ -118,6 +131,8 @@ export class SceneComponent {
       console.log( 'clicked xrButton ', e );
     } );
     document.body.appendChild( xrButton );
+
+
 
     // Check XR Support and determine if the session is AR or VR
     // Initiate a session if supported
@@ -189,15 +204,23 @@ export class SceneComponent {
     this.renderer.setPixelRatio( window.devicePixelRatio );
   }
 
-  // Ambient Light
-  addLight () {
-    const ambient = new HemisphereLight( 0xffffff, 0xbbbbff, 3 );
+
+  addLights () {
+
+    // Camera Lights
+    const cameraLight: any = this.lightsService.createSpotLight();
+    cameraLight.position.set( 0, -2, 0.64 );
+    this.camera.add( cameraLight );
+
+    // Ambient Light
+    const ambient = new HemisphereLight( 0xffffff, 0xbbbbff, 0.5 );
     this.scene.add( ambient );
+
   }
 
   fog ( ops?: any ) {
 
-    // Heavy fog
+    // Heavy fog for test
     const setcolor = 0xF02050;
     this.scene.background = new Color( setcolor );
     this.scene.fog = new Fog( setcolor, 12, 20 );
@@ -225,6 +248,23 @@ export class SceneComponent {
     stats.addPanel( gpuPanel );
     stats.showPanel( 0 );
     this.addToRender( () => stats.update() );
+
+  }
+
+  // TODO:
+  onTouchStart ( e: TouchEvent ) {
+
+    this.pointer.x = ( ( e.touches[0].clientX - this.rect.left ) / ( this.rect.right - this.rect.left ) ) * 2 - 1;
+    this.pointer.y = - ( ( e.touches[0].clientY - this.rect.top ) / ( this.rect.bottom - this.rect.top ) ) * 2 + 1;
+    this.interactions.intersectObjects( { pointer: this.pointer, camera: this.camera, scene: this.scene, select: true } );
+
+  }
+
+  onPointerDown ( e: PointerEvent ) {
+
+    this.pointer.x = ( ( e.clientX - this.rect.left ) / ( this.rect.right - this.rect.left ) ) * 2 - 1;
+    this.pointer.y = - ( ( e.clientY - this.rect.top ) / ( this.rect.bottom - this.rect.top ) ) * 2 + 1;
+    this.interactions.intersectObjects( { pointer: this.pointer, camera: this.camera, scene: this.scene } );
 
   }
 }

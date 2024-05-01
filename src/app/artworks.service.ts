@@ -33,7 +33,7 @@ export class ArtworksService {
       ],
     },
     {
-      id: 0,
+      id: 1,
       title: "Self Portrait",
       audio: "assets/audio/1.mp3",
       date: "1887",
@@ -59,7 +59,7 @@ export class ArtworksService {
       ],
     },
     {
-      id: 1,
+      id: 2,
       title: "Almond Blossom",
       audio: "assets/audio/2.mp3",
       date: "1890",
@@ -87,7 +87,7 @@ export class ArtworksService {
       wiki: "https://en.wikipedia.org/wiki/Almond_Blossoms",
     },
     {
-      id: 2,
+      id: 3,
       title: "The Bedroom",
       audio: "assets/audio/3.mp3",
       date: "1887",
@@ -114,7 +114,7 @@ export class ArtworksService {
       wiki: "https://wikipedia.org/wiki/Bedroom_in_Arles",
     },
     {
-      id: 3,
+      id: 4,
       title: "Sunflowers",
       audio: "assets/audio/1.mp3",
       date: "1887",
@@ -141,7 +141,7 @@ export class ArtworksService {
       ],
     },
     {
-      id: 4,
+      id: 5,
       title: "Irises",
       audio: "assets/audio/1.mp3",
       date: "1889",
@@ -556,7 +556,8 @@ export class ArtworksService {
     return this.focusedArtwork();
   }
 
-  getArtworks () {
+  getArtworks ( number?: number ) {
+    if ( number ) { this.artworks.set( this.artworksArray.splice( 0, number ) ); }
     return this.artworks;
   }
 

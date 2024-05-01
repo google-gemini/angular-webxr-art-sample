@@ -59,7 +59,7 @@ export class TestComponent extends SceneComponent {
     this.addEnvironment();
 
     // Lights
-    this.addLights();
+    this.addRectLights();
 
   };
 
@@ -185,34 +185,7 @@ export class TestComponent extends SceneComponent {
 
   }
 
-  addLights () {
-    // Hemlight
-    // const hemiLight = new HemisphereLight( 0xffffff, 0x8d8d8d, 3 );
-    // hemiLight.position.set( 0, 20, 0 );
-
-    // const hHelper = new HemisphereLightHelper( hemiLight, 5, 'orange' );
-    // this.scene.add( hemiLight );
-
-    // // Directional Lights
-    // const dirLight = new DirectionalLight( 0xffffff, 3 );
-    // dirLight.position.set( 3, 10, 10 );
-    // dirLight.castShadow = true;
-    // dirLight.shadow.camera.top = 2;
-    // dirLight.shadow.camera.bottom = - 2;
-    // dirLight.shadow.camera.left = - 2;
-    // dirLight.shadow.camera.right = 2;
-    // dirLight.shadow.camera.near = 0.1;
-    // dirLight.shadow.camera.far = 40;
-
-    // const dHelper = new DirectionalLightHelper( dirLight, 5, );
-    // this.scene.add( dirLight );
-
-
-    // const light = new DirectionalLight();
-    // light.position.set( 0.2, 1.5, -2 );
-
-    // const helper = new DirectionalLightHelper( light, 5, 'red' );
-    // this.scene.add( light );
+  addRectLights () {
 
     // Area Lights
     RectAreaLightUniformsLib.init();

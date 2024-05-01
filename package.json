@@ -29,6 +29,8 @@
     "popmotion": "^11.0.5",
     "rxjs": "~7.8.0",
     "three": "^0.164.1",
+    "three-mesh-ui": "^6.5.4",
+    "three.interactive": "^1.7.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.4"
   },

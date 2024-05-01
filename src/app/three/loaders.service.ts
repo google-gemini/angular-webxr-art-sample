@@ -11,7 +11,7 @@ export class LoadersService {
   public loadingProgress: WritableSignal<number> = signal( 0 );
   private loadingManager = new LoadingManager();
   private gltfLoader = new GLTFLoader( this.loadingManager );
-  private textureLoader: TextureLoader = new TextureLoader( this.loadingManager );
+  public textureLoader: TextureLoader = new TextureLoader( this.loadingManager );
   private dracoLoader = new DRACOLoader( this.loadingManager );
   private loadStartTime = Date.now();
 
@@ -52,16 +52,11 @@ export class LoadersService {
 
     this.loadingManager.onError = ( url: string ) => {
       console.error( 'There was an error loading ' + url );
-      // gtag( 'event', 'error_loading', {
-      //   'description': `Error loading ${url}`,
-      //   'event_category': 'loading',
-      //   'event_label': 'loading_error',
-      //   'non_interaction': true
-      // } );
+
     };
 
     // Configure and create Draco decoder
-    this.dracoLoader.setDecoderPath(
+    this.dracoLoader.setDecoderPath( //'/examples/jsm/libs/draco/'
       'https://www.gstatic.com/draco/versioned/decoders/1.5.7/'
     );
     this.dracoLoader.setDecoderConfig( { type: 'js' } );
