@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 
-import { Color, MeshPhysicalMaterial, MeshStandardMaterial, RepeatWrapping, SRGBColorSpace } from 'three';
-import { range } from 'three/examples/jsm/nodes/nodes.js';
+import { MeshPhysicalMaterial, MeshStandardMaterial, RepeatWrapping, SRGBColorSpace } from 'three';
 import { LoadersService } from './loaders.service';
 
 @Injectable( {
@@ -11,7 +10,6 @@ export class MaterialsService {
 
   private loadersService = inject( LoadersService );
 
-  randomColors: any = range( new Color( 0x000000 ), new Color( 0xFFFFFF ) );
   constructor() { }
 
   createPhongMaterial ( ops: any ) {

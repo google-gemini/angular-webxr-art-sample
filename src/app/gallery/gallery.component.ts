@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 
 import { Material, Object3D, Object3DEventMap, PointLight, Vector2 } from 'three';
 
@@ -10,6 +10,7 @@ import { MaterialsService } from '../three/materials.service';
 import { SceneComponent } from '../three/scene/scene.component';
 import { TestComponent } from '../three/test/test.component';
 import { UIService } from '../three/ui.service';
+import { SpeechService } from '../ai/speech.service';
 
 @Component( {
   selector: 'art-gallery',
@@ -25,15 +26,52 @@ export class GalleryComponent extends SceneComponent {
   private artworksService = inject( ArtworksService );
   private materialsService = inject( MaterialsService );
   private ui = inject( UIService );
+  private speech = inject( SpeechService );
 
 
   public artworks = this.artworksService.getArtworks( 5 );
   // TODO: clean up
   private focusedFrame: any;
   focusArtwork = this.artworksService.getFocusedArtwork();
+  buttons = [
+    {
+      name: "Next Button",
+      text: "Next",
+      onClick: ( ind: number ) => {
+        this.frameService.changeSelection( ind, 1 );
+      },
+      position: { x: -0.75, y: 0, z: -0.0 },
+      rotation: {},
+    },
+    {
+      name: "Info Button",
+      text: "Info",
+      onClick: ( ind: number ) => {
+        this.playInfo( ind );
+      },
+      position: { x: -0.8, y: 0.8, z: -0.1 },
+      rotation: {},
+    },
+    {
+      name: "Previous Button",
+      text: "Previous",
+      onClick: ( ind: number ) => {
+        this.frameService.changeSelection( ind, -1 );
+      },
+      position: { x: 0.75, y: 0, z: -0 },
+      rotation: {},
+    },
+  ];
+
 
   constructor() {
     super();
+    effect( () => {
+      console.log( `The current focused is: ${this.artworks()}` );
+      // this.frameService.updateFrame( { texture: this.fa().url, frame: this.focusedFrame } );
+      this.frameService.updateFrames( this.artworks() );
+
+    } );
   }
 
   override ngAfterViewInit (): void {
@@ -137,6 +175,10 @@ export class GalleryComponent extends SceneComponent {
 
   }
 
+  playInfo ( ind: number ) {
+
+  }
+
   // Place and animate the logo when loaded
   onLoad ( model: Object3D ) {
 
@@ -157,4 +199,4 @@ export class GalleryComponent extends SceneComponent {
       onLoadCB: this.onLoad.bind( this ),
     } );
   }
-}
+};

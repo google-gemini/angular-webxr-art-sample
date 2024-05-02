@@ -25,7 +25,12 @@ export class MuseumComponent {
   addArtwork ( artwork: Artwork ) {
     this.focusArtwork.set( artwork );
     this.artworksService.addArtwork( artwork );
-    // this.speechService.say( artwork.description );
+  }
+
+  onArtworks ( artworks: Artwork[] ) {
+    this.focusArtwork.set( artworks[0] );
+    this.artworksService.updateArtworks( artworks );
+
   }
 
 }

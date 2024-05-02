@@ -13,12 +13,15 @@ import { SpeechService } from '../speech.service';
   styleUrl: './image-gen.component.scss'
 } )
 export class ImageGenComponent {
-  prompt = '';//"Describe the image and tell me what makes this artwork beautiful";
-  question: string = '';// "a woman wearing kimono looking into the camera with bright colors";
-  private speech = inject( SpeechService );
   private generative = inject( GenerativeService );
+  private speech = inject( SpeechService );
 
   newArtworkEvent = output<Artwork>();
+  newArtworksEvent = output<Artwork[]>();
+
+  prompt = '';
+  question: string = '';
+
 
   genImage () {
 
@@ -41,7 +44,35 @@ export class ImageGenComponent {
 
   }
 
-  // TODO
+  genImages () {
+
+    this.prompt = this.prompt == '' ? 'A steampunk era science lab with a stylish figure in silhouette with dramatic lighting and vibrant colors dominated with copper hue' : this.prompt;
+    this.question = this.question == '' ? 'Describe the image and tell me what makes this artwork beautiful' : this.question;
+
+    // Call the service to generate image and emit the new image info
+    this.generative.generateImages( { prompt: this.prompt, question: this.question } ).subscribe( ( response ) => {
+      console.log( response );
+
+      // To test with fake five images
+      // const response: any[] = this.generative.generateImages( { prompt: this.prompt, question: this.question } );
+      let images: Artwork[] = [];
+      // @ts-expect-error
+      response.map( ( data, i ) => {
+        const image: Artwork = {
+          id: i,
+          url: `data:image/png;base64,${data.image}`,
+          description: `${data.caption}`,
+          title: data.title
+        };
+        images.push( image );
+
+      } );
+      this.newArtworksEvent.emit( images );
+
+    } );
+  }
+
+  // TODO:
   speechInput () { }
 
 };

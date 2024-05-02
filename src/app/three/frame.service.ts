@@ -8,6 +8,7 @@ import { LoadersService } from './loaders.service';
 import { PrimitivesService } from './primitives.service';
 import { UIService } from './ui.service';
 import { LightsService } from './lights.service';
+import { SpeechService } from '../ai/speech.service';
 
 @Injectable( {
   providedIn: 'root'
@@ -18,6 +19,7 @@ export class FrameService {
   private loadersService = inject( LoadersService );
   private UIService = inject( UIService );
   private primitivesService = inject( PrimitivesService );
+  private speech = inject( SpeechService );
 
   angle = Math.PI * 6;
   canvasMaterial: MeshPhongMaterial = new MeshPhongMaterial();
@@ -38,10 +40,10 @@ export class FrameService {
       rotation: {},
     },
     {
-      name: "Upvote Button",
-      text: "Upvote",
+      name: "Info Button",
+      text: "Info",
       onClick: ( ind: number ) => {
-        this.upvoteSelection( ind );
+        this.playInfo( ind );
       },
       position: { x: -0.8, y: 0.8, z: -0.1 },
       rotation: {},
@@ -63,9 +65,9 @@ export class FrameService {
    * @param artworks 
    * @returns 
    */
-  createFrames ( artworks: Artwork[] ) {
+  createFrames ( artworks: Artwork[], btns: any[] = [], cb?: Function ) {
     this.frames.name = 'Frames Group';
-
+    // this.buttons = btns;
     // Angle between frames
     this.angle = ( Math.PI * 2 ) / artworks.length;
 
@@ -101,6 +103,7 @@ export class FrameService {
     texture.colorSpace = SRGBColorSpace;
     texture.mapping = UVMapping;
     const canvasMaterial = this.phongMaterial.clone();
+    canvasMaterial.name = 'Canvas Material';
     canvasMaterial.map = texture;
 
     // Create the frame & canvas mesh
@@ -111,7 +114,7 @@ export class FrameService {
 
     const canvasMesh = new Mesh( canvasGeometry, canvasMaterial );
     frameMesh.name = `${artwork.title} frame mesh` || 'frame';
-    canvasMesh.name = `${artwork.title} canvas mesh` || 'frame canvas';
+    canvasMesh.name = 'Canvas';
 
     const light = this.lightsService.createSpotLight();
     light.target = canvasMesh;
@@ -123,28 +126,9 @@ export class FrameService {
     const buttons = this.createUI( artwork );
     frame.add( buttons );
 
+    frame.userData['description'] = artwork.description;
 
     return frame;
-
-  }
-
-  /**
-   * Creates the canvas element that displays the images
-   * @param options 
-   * @returns 
-   */
-  createCanvas ( options: any ) {
-    const ops = Object.assign( {}, { x: 2, y: 2, z: 0.6 }, options, );
-    const texture = this.loadersService.loadTexture( ops.artwork.url );
-    texture.colorSpace = SRGBColorSpace;
-    texture.mapping = UVMapping;
-    const canvasMaterial = this.canvasMaterial.clone();
-    canvasMaterial.map = texture;
-
-    const canvas = this.primitivesService.createBox( { x: ops.x, y: ops.y, z: ops.z, material: canvasMaterial } );
-    canvas.name = `Focused Canvas`;
-
-    return canvas;
 
   }
 
@@ -181,27 +165,33 @@ export class FrameService {
   }
 
   // TODO:
-  updateFrames ( ops: any ) {
+  updateFrames ( artworks: Artwork[] ) {
+    console.log( 'updating frames now ', artworks[0] );
     this.frames.children.forEach( ( frame, i ) => {
-      const texture = this.loadersService.loadTexture( ops.textures[i] );
-
+      this.updateFrame( { frame: frame, i: i, texture: artworks[i].url } );
+      frame.userData['description'] = artworks[i].description;
     } );
   }
 
   updateFrame ( ops: any ) {
+    console.log( 'Updating frame canvas ', ops.frame );
 
-    const material = ops.frame.children[1].getObjectByName( `Focused Canvas` ).material;
+    const material = ops.frame.children[1].getObjectByName( `Canvas` ).material;
     const texture = this.loadersService.loadTexture( ops.texture );
     texture.colorSpace = SRGBColorSpace;
     texture.mapping = UVMapping;
     material.map = texture;
-    material.map.userData['url'] = ops.texture;
     material.needsUpdate = true;
 
+    ops.frame.userData['url'] = ops.texture;
+
+    console.log( 'Updated frame canvas ', ops.frame.userData );
   }
 
   // TODO: maybe move to the gallery 
-  upvoteSelection ( index: number ) {
+  playInfo ( index: number ) {
+    const description = this.frames.children[index].userData['description'];
+    this.speech.say( description );
 
   }
 
@@ -276,6 +266,27 @@ export class FrameService {
 
 
   //===== For Test Component
+
+  /**
+ * Creates the canvas element that displays the images
+ * @param options 
+ * @returns 
+ */
+  createCanvas ( options: any ) {
+    const ops = Object.assign( {}, { x: 2, y: 2, z: 0.6 }, options, );
+    const texture = this.loadersService.loadTexture( ops.artwork.url );
+    texture.colorSpace = SRGBColorSpace;
+    texture.mapping = UVMapping;
+    const canvasMaterial = this.canvasMaterial.clone();
+    canvasMaterial.map = texture;
+
+    const canvas = this.primitivesService.createBox( { x: ops.x, y: ops.y, z: ops.z, material: canvasMaterial } );
+    canvas.name = `Canvas Material`;
+
+    return canvas;
+
+  }
+
   createFocusFrame ( artwork: Artwork ) {
     const frame = new Group();
     frame.name = `Focused Frame`;
