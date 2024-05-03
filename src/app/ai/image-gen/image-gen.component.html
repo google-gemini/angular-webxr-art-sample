@@ -1,10 +1,10 @@
 <div id="imagegen">
-    <p>Welcome to WebXR Generative AI Art Gallery!</p>
+    <p>{{this.message()}}</p>
     <section class="prompt form">
         <input id="pi" [(ngModel)]="prompt" placeholder="Describe an artwork you would like to create" type="text" />
         <input id="qi" [(ngModel)]="question" placeholder="Ask a question about the artwork you would like to create"
             type="text" />
-        <!-- <mat-icon [hidden]="true" (click)="speechInput()" aria-hidden="false" aria-label="Microphone" fontIcon="microphone" /> -->
+
         <button mat-button color="primary" (click)="genImages()">
             Generate
         </button>

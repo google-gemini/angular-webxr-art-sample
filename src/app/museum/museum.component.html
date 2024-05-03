@@ -1,4 +1,5 @@
-<art-image-gen (newArtworkEvent)="addArtwork($event)" (newArtworksEvent)="onArtworks($event)" #gen />
+<art-image-gen (newArtworkEvent)="addArtwork($event)" (newArtworksEvent)="onArtworks($event)"
+    [class.hidden]="isHidden()" #gen />
 @defer (on interaction(gen);prefetch on idle) {
 <!-- <art-test [fa]="focusArtwork()" /> -->
 

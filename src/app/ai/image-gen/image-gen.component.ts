@@ -1,14 +1,16 @@
-import { Component, inject, output } from '@angular/core';
+import { NgClass } from '@angular/common';
+import { Component, inject, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { Artwork } from '../../artworks.service';
 import { GenerativeService } from '../generative.service';
 import { SpeechService } from '../speech.service';
 
+
 @Component( {
   selector: 'art-image-gen',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, NgClass],
   templateUrl: './image-gen.component.html',
   styleUrl: './image-gen.component.scss'
 } )
@@ -19,8 +21,10 @@ export class ImageGenComponent {
   newArtworkEvent = output<Artwork>();
   newArtworksEvent = output<Artwork[]>();
 
+  isLoading = signal( false );
   prompt = '';
   question: string = '';
+  message = signal( 'Welcome to WebXR Generative AI Art Gallery!' );
 
 
   genImage () {
@@ -45,13 +49,14 @@ export class ImageGenComponent {
   }
 
   genImages () {
-
+    this.message.set( 'Generating your artwork...' );
+    this.isLoading.set( true );
     this.prompt = this.prompt == '' ? 'A steampunk era science lab with a stylish figure in silhouette with dramatic lighting and vibrant colors dominated with copper hue' : this.prompt;
     this.question = this.question == '' ? 'Describe the image and tell me what makes this artwork beautiful' : this.question;
 
     // Call the service to generate image and emit the new image info
     this.generative.generateImages( { prompt: this.prompt, question: this.question } ).subscribe( ( response ) => {
-      console.log( response );
+      // console.log( response );
 
       // To test with fake five images
       // const response: any[] = this.generative.generateImages( { prompt: this.prompt, question: this.question } );

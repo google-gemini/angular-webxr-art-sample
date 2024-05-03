@@ -108,7 +108,7 @@ export class FrameService {
 
     // Create the frame & canvas mesh
     const frameMaterial = this.phongMaterial.clone();
-    frameMaterial.color.set( artwork.colors[0] );
+    frameMaterial.color.set( "rgb(165, 187, 206)" );
     frameMaterial.needsUpdate = true;
     const frameMesh = new Mesh( this.frameGeometry, frameMaterial );
 

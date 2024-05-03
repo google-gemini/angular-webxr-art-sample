@@ -1,12 +1,14 @@
 import { inject, Injectable } from '@angular/core';
 
-import { MeshPhysicalMaterial, MeshStandardMaterial, RepeatWrapping, SRGBColorSpace } from 'three';
+import { CanvasTexture, MeshPhysicalMaterial, MeshStandardMaterial, RepeatWrapping, SRGBColorSpace, Vector2 } from 'three';
 import { LoadersService } from './loaders.service';
+import { FlakesTexture } from 'three/examples/jsm/textures/FlakesTexture.js';
 
 @Injectable( {
   providedIn: 'root'
 } )
 export class MaterialsService {
+  private flakesNormalMap = new CanvasTexture( new FlakesTexture() );
 
   private loadersService = inject( LoadersService );
 
@@ -14,6 +16,19 @@ export class MaterialsService {
 
   createPhongMaterial ( ops: any ) {
 
+  }
+
+  createLogoMaterial ( ops?: any ) {
+    let material = new MeshPhysicalMaterial( {
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.1,
+      metalness: 0.9,
+      roughness: 0.5,
+      color: ops.color || 0x0000ff,
+      normalMap: this.flakesNormalMap,
+      normalScale: new Vector2( 0.15, 0.15 )
+    } );
+    return material;
   }
 
   createMeshPhysicalMaterial ( ops?: any ) {
