@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { LoadingComponent } from './loading/loading.component';
-import { TestComponent } from './three/test/test.component';
+
 import { ImageGenComponent } from './ai/image-gen/image-gen.component';
-import { MuseumComponent } from './museum/museum.component';
 import { GalleryComponent } from './gallery/gallery.component';
+import { LoadingComponent } from './loading/loading.component';
+import { MuseumComponent } from './museum/museum.component';
 
 export const routes: Routes = [
     {
@@ -20,11 +20,6 @@ export const routes: Routes = [
         path: 'gallery',
         component: GalleryComponent,
         title: 'WebXR Gallery'
-    },
-    {
-        path: 'test',
-        component: TestComponent,
-        title: 'Test'
     },
     {
         path: 'imagegen',

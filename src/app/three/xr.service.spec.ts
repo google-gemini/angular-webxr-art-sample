@@ -1,16 +1,16 @@
 import { TestBed } from '@angular/core/testing';
 
-import { XrService } from './xr.service';
+import { XRService } from './xr.service';
 
-describe('XrService', () => {
-  let service: XrService;
+describe( 'XRService', () => {
+  let service: XRService;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(XrService);
-  });
+  beforeEach( () => {
+    TestBed.configureTestingModule( {} );
+    service = TestBed.inject( XRService );
+  } );
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
-});
+  it( 'should be created', () => {
+    expect( service ).toBeTruthy();
+  } );
+} );

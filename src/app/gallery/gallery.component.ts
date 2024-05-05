@@ -8,14 +8,13 @@ import { LoadingComponent } from '../loading/loading.component';
 import { FrameService } from '../three/frame.service';
 import { MaterialsService } from '../three/materials.service';
 import { SceneComponent } from '../three/scene/scene.component';
-import { TestComponent } from '../three/test/test.component';
 import { UIService } from '../three/ui.service';
 import { SpeechService } from '../ai/speech.service';
 
 @Component( {
   selector: 'art-gallery',
   standalone: true,
-  imports: [SceneComponent, LoadingComponent, TestComponent, ImageGenComponent],
+  imports: [SceneComponent, LoadingComponent, ImageGenComponent],
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.scss'
 } )
