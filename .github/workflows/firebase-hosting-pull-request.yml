@@ -11,8 +11,11 @@ jobs:
   build_and_preview:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
+    environment:
+      name: production
     steps:
       - uses: actions/checkout@v4
+      - run: echo "GEMINI_API_URL=${{secrets.GEMINI_API_URL}}"
       - run: yarn deploy
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
