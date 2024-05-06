@@ -2,6 +2,16 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.1.0-rc.1.
 
+## Setup
+
+
+
+### Setting up Gemini API
+
+- Run `yarn env` to create environments folder for your project. 
+- Create a Google Cloud Function to make a call to GEMINI API. Copy paste the Functions code in your Google Console.
+- Add the Google Function API endpoint url to your environment file as shown in environment.sample.ts file
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.

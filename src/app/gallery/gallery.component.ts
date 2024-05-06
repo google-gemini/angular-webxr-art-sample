@@ -1,79 +1,43 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, effect, inject, input, signal, WritableSignal } from '@angular/core';
 
-import { Material, Object3D, Object3DEventMap, PointLight, Vector2 } from 'three';
+import { Material, Object3D, Object3DEventMap, PointLight } from 'three';
 
 import { ImageGenComponent } from '../ai/image-gen/image-gen.component';
-import { ArtworksService } from '../artworks.service';
+import { Artwork, ArtworksService } from '../artworks.service';
 import { LoadingComponent } from '../loading/loading.component';
 import { FrameService } from '../three/frame.service';
 import { MaterialsService } from '../three/materials.service';
 import { SceneComponent } from '../three/scene/scene.component';
 import { UIService } from '../three/ui.service';
-import { SpeechService } from '../ai/speech.service';
 
 @Component( {
   selector: 'art-gallery',
   standalone: true,
-  imports: [SceneComponent, LoadingComponent, ImageGenComponent],
+  imports: [SceneComponent, LoadingComponent, ImageGenComponent,],
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.scss'
 } )
 
 export class GalleryComponent extends SceneComponent {
   // Services
-  private frameService = inject( FrameService );
-  private artworksService = inject( ArtworksService );
-  private materialsService = inject( MaterialsService );
-  private ui = inject( UIService );
-  private speech = inject( SpeechService );
+  private frameService: FrameService = inject( FrameService );
+  private materialsService: MaterialsService = inject( MaterialsService );
+  private ui: UIService = inject( UIService );
 
-
-  public artworks = this.artworksService.getArtworks( 5 );
-  // TODO: clean up
-  private focusedFrame: any;
-  focusArtwork = this.artworksService.getFocusedArtwork();
-  buttons = [
-    {
-      name: "Next Button",
-      text: "Next",
-      onClick: ( ind: number ) => {
-        this.frameService.changeSelection( ind, 1 );
-      },
-      position: { x: -0.75, y: 0, z: -0.0 },
-      rotation: {},
-    },
-    {
-      name: "Info Button",
-      text: "Info",
-      onClick: ( ind: number ) => {
-        this.playInfo( ind );
-      },
-      position: { x: -0.8, y: 0.8, z: -0.1 },
-      rotation: {},
-    },
-    {
-      name: "Previous Button",
-      text: "Previous",
-      onClick: ( ind: number ) => {
-        this.frameService.changeSelection( ind, -1 );
-      },
-      position: { x: 0.75, y: 0, z: -0 },
-      rotation: {},
-    },
-  ];
-
+  public artworks = input.required<Artwork[]>();
 
   constructor() {
-    super();
-    effect( () => {
-      console.log( `The current focused is: ${this.artworks()}` );
-      // this.frameService.updateFrame( { texture: this.fa().url, frame: this.focusedFrame } );
-      this.frameService.updateFrames( this.artworks() );
 
+    super();
+
+    effect( () => {
+      this.frameService.updateFrames( this.artworks() );
     } );
+
   }
 
   override ngAfterViewInit (): void {
+
     super.ngAfterViewInit();
 
     // Focus frame
@@ -82,10 +46,6 @@ export class GalleryComponent extends SceneComponent {
     // Environment
     this.createEnv();
 
-    // Lights
-    // this.addLights();
-
-    // TODO:Add Camera movement 
   };
 
   createFrames () {
@@ -97,13 +57,14 @@ export class GalleryComponent extends SceneComponent {
   }
 
   createEnv () {
+
+    // Lights
     this.addCornerLights();
 
     // Add Models
     // Model for Floor
     const model = this.loadersService.loadGLTF( {
       path: "assets/models/floorModel.glb",
-      onLoadProgress: this.onLoadProgress.bind( this ),
       onLoadCB: ( model: Object3D<Object3DEventMap> ) => {
         this.onModelLoaded( model );
       },
@@ -112,15 +73,12 @@ export class GalleryComponent extends SceneComponent {
     // Model for Walls
     const modelWalls = this.loadersService.loadGLTF( {
       path: "assets/models/galleryInnerWalls.glb",
-      onLoadProgress: this.onLoadProgress.bind( this ),
       onLoadCB: ( model: Object3D<Object3DEventMap> ) => {
         this.onLoadWallsLoaded( model );
       },
     } );
 
   }
-
-  onLoadProgress () { }
 
   onModelLoaded ( model: Object3D<Object3DEventMap> ) {
 
@@ -148,14 +106,18 @@ export class GalleryComponent extends SceneComponent {
       }
 
     } );
+
     this.addToScene( model );
+
   }
 
   onLoadWallsLoaded ( model: Object3D<Object3DEventMap> ) {
+
     model.position.z = -0;
     model.scale.set( 3, 3, 3 );
 
     this.addToScene( model );
+
   }
 
   addCornerLights () {
@@ -174,28 +136,4 @@ export class GalleryComponent extends SceneComponent {
 
   }
 
-  playInfo ( ind: number ) {
-
-  }
-
-  // Place and animate the logo when loaded
-  onLoad ( model: Object3D ) {
-
-    model.position.z = -50;
-    model.position.y = 1;
-    model.name = 'aLogo';
-    this.addToScene( model );
-    this.addToRender( () => {
-      model.rotation.y += 0.01;
-    } );
-
-  }
-
-  addLogo () {
-    // Load the logo
-    const model = this.loadersService.loadGLTF( {
-      path: '/assets/models/aLogo.glb',
-      onLoadCB: this.onLoad.bind( this ),
-    } );
-  }
 };

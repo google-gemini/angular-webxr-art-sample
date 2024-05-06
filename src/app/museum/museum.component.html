@@ -1,7 +1,7 @@
 <art-image-gen (newArtworksEvent)="onArtworks($event)" [class.hidden]="isHidden()" #gen />
 @defer (on interaction(gen);prefetch on idle) {
 
-<art-gallery />
+<art-gallery [artworks]="artworks()" />
 } @placeholder ( minimum 5s) {
 <art-loading></art-loading>
 } @error {

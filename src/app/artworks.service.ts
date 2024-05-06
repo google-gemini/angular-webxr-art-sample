@@ -43,25 +43,33 @@ export class ArtworksService {
     }
   ];
 
-  public artworks = signal( this.artworksArray );
-  public focusedArtwork = signal( this.artworksArray[0] );
+  public artworks: WritableSignal<Artwork[]> = signal( this.artworksArray );
+  public focusedArtwork: WritableSignal<Artwork> = signal( this.artworksArray[0] );
 
   getFocusedArtwork () {
+
     return this.focusedArtwork();
+
   }
 
   getArtworks ( number?: number ) {
+
     if ( number ) { this.artworks.set( this.artworksArray.splice( 0, number ) ); }
     return this.artworks;
+
   }
 
   // For multiple image creation at once
   updateArtworks ( artworks: Artwork[] ) {
+
     this.artworks.set( artworks );
+
   }
 
   setFocusedArtwork ( artwork: Artwork ) {
+
     this.focusedArtwork.set( artwork );
+
   }
 }
 

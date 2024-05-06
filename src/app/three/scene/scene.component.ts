@@ -25,11 +25,10 @@ import { update } from 'three/examples/jsm/libs/tween.module.js';
 import { GPUStatsPanel } from 'three/examples/jsm/utils/GPUStatsPanel.js';
 import { XRButton } from 'three/examples/jsm/webxr/XRButton.js';
 
-import { LoadersService } from '../loaders.service';
-import { XRService } from '../xr.service';
 import { InteractionsService } from '../interactions.service';
 import { LightsService } from '../lights.service';
-
+import { LoadersService } from '../loaders.service';
+import { XRService } from '../xr.service';
 
 export interface SceneOptions {
   width?: number;
@@ -132,8 +131,6 @@ export class SceneComponent {
     } );
     document.body.appendChild( xrButton );
 
-
-
     // Check XR Support and determine if the session is AR or VR
     // Initiate a session if supported
     this.xrService.checkXRSupport( { renderer: this.renderer, camera: this.camera, scene: this.scene } );
@@ -204,7 +201,6 @@ export class SceneComponent {
     this.renderer.setPixelRatio( window.devicePixelRatio );
   }
 
-
   addLights () {
 
     // Camera Lights
@@ -221,7 +217,7 @@ export class SceneComponent {
   fog ( ops?: any ) {
 
     // Heavy fog for test
-    const setcolor = 0xF02050;
+    const setcolor = ops.color || 0xF02050;
     this.scene.background = new Color( setcolor );
     this.scene.fog = new Fog( setcolor, 12, 20 );
   }
@@ -251,7 +247,6 @@ export class SceneComponent {
 
   }
 
-  // TODO:
   onTouchStart ( e: TouchEvent ) {
 
     this.pointer.x = ( ( e.touches[0].clientX - this.rect.left ) / ( this.rect.right - this.rect.left ) ) * 2 - 1;

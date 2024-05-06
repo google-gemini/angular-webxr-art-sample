@@ -3,10 +3,9 @@ import {
   Component
 } from '@angular/core';
 
-import { CanvasTexture, Mesh, MeshBasicMaterial, MeshPhysicalMaterial, Object3D, PointLight, SphereGeometry, Vector2 } from 'three';
+import { Mesh, MeshBasicMaterial, Object3D, PointLight, SphereGeometry } from 'three';
 
 import { SceneComponent } from '../three/scene/scene.component';
-import { FlakesTexture } from 'three/examples/jsm/textures/FlakesTexture';
 
 @Component( {
   selector: 'art-loading',

@@ -12,9 +12,9 @@
     font-size: large;
     z-index: 15;
 }
+
 #imagegen {
     background-color: rgb(229, 250, 251);
-
     width: 100%;
     height: 100%;
 }
@@ -58,20 +58,24 @@
     transition: all 0.3 ease;
     cursor: pointer;
 }
+
 .form button:hover,
 .form button:active,
 .form button:focus {
     background: #43a047;
 }
+
 .form .message {
     margin: 15px 0 0;
     color: #b3b3b3;
     font-size: 12px;
 }
+
 .form .message a {
     color: #4caf50;
     text-decoration: none;
 }
+
 .form .register-form {
     display: none;
 }

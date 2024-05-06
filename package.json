@@ -1,13 +1,33 @@
 {
   "name": "angular-webxr-gallery",
   "version": "0.0.0",
+  "author": {
+    "name": "Ayşegül Yönet"
+  },
+  "description": "Google I/O 2024 Gemini Vertex AI Angular demo, a WebXR AI Generated Art Gallery experience",
+  "keywords": [
+    "AI",
+    "Generative Art",
+    "Angular",
+    "Google Cloud Functions",
+    "Vertex AI",
+    "WebXR",
+    "Art Gallery"
+  ],
+  "homepage": "https://github.com/google-gemini/angular-webxr-art-sample",
+  "bugs": {
+    "url": "https://github.com/google-gemini/angular-webxr-art-sample/issues"
+  },
+  "license": "MIT",
   "scripts": {
     "ng": "./node_modules/@angular/cli/bin/ng.js",
     "start": "ng serve",
     "build": "ng build",
     "deploy": "yarn install && ng build",
+    "prod": "ng serve --configuration production",
     "watch": "ng build --watch --configuration development",
     "comp": "ng g component",
+    "env": "ng generate environments",
     "serv": "ng g service",
     "test": "ng test",
     "update": "ng update @angular/cli @angular/core",
