@@ -11,35 +11,35 @@ export class ArtworksService {
       title: "Designer ",
       description:
         "",
-      url: "assets/artworks/Designer_1.webp",
+      url: "assets/artworks/d2.webp",
     },
     {
       id: 1,
       title: "Designer_0",
       description:
         "",
-      url: "assets/artworks/Designer_0.webp",
+      url: "assets/artworks/d0.jpeg",
     },
     {
       id: 2,
       title: "Almond Blossom",
       description:
         "",
-      url: "assets/artworks/Designer.webp",
+      url: "assets/artworks/d3.jpeg",
     },
     {
       id: 3,
       title: "The Bedroom",
       description:
         "",
-      url: "assets/artworks/Designer_2.webp",
+      url: "assets/artworks/d1.jpeg",
     },
     {
       id: 4,
       title: "Sunflowers",
       description:
         "",
-      url: "assets/artworks/Designer_6.jpeg",
+      url: "assets/artworks/d6.jpeg",
     }
   ];
 
