@@ -8,10 +8,10 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 To get started with the Angular app without setting up the Gemini API, you can install the dependencies and run start script. 
 
-`
+```
 yarn install
 yarn start
-`
+```
 
 ### Setting up Gemini API
 
