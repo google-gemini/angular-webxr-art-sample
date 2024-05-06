@@ -7,6 +7,14 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 [![Angular WebXR Art Sample](http://img.youtube.com/vi/B-k8ZNVM-F4/0.jpg)](https://youtu.be/B-k8ZNVM-F4)
 
+## Pre-requisites
+
+1. Node.js and npm
+  * Download and install Go: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
+2. Gemini API key
+  * Launch Google AI Studio: https://aistudio.google.com/
+  * Click “Get API Key”
+
 ## Setup
 
 To get started with the Angular app without setting up the Gemini API, you can install the dependencies and run start script. 
@@ -25,23 +33,3 @@ yarn start
 ### Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
-
-### Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-### Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-### Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-### Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
