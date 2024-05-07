@@ -5,6 +5,7 @@
     "ms-vscode.vscode-typescript-next",
     "cesium.gltf-vscode",
     "cloudedcat.vscode-model-viewer",
-    "naumovs.color-highlight"
+    "naumovs.color-highlight",
+    "googlecloudtools.cloudcode"
   ]
 }

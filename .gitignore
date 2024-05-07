@@ -36,8 +36,14 @@ yarn-error.log
 /libpeerconnection.log
 testem.log
 /typings
-src/environments/
 
 # System files
 .DS_Store
 Thumbs.db
+
+# Python
+server/lib
+server/bin
+server/bin
+server/pyvenv.cfg
+server/*.pyc
