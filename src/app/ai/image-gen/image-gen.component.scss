@@ -107,3 +107,9 @@ input {
 [disabled] {
     opacity: 0.5;
 }
+
+.error {
+    color: red;
+    max-height: 100px;
+    overflow: auto;
+}

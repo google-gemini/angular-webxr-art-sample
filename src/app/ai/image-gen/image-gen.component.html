@@ -30,7 +30,9 @@
       type="text"
     />
 
-    {{ error }}
+    <div class="error">
+        {{ error }}
+    </div>
     <button
       mat-button
       [disabled]="requestPending"

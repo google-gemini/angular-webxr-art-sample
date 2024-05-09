@@ -50,30 +50,32 @@ export class ImageGenComponent {
     this.error = null;
 
     // Call the service to generate image and emit the new image info
-    this.generative.generateImages( { prompt: this.prompt, question: this.question } ).pipe(catchError((error: any) => {
-      this.error = error.message;
-      this.requestPending = false;
-      return error;
-    })).subscribe( ( response ) => {
+    this.generative.generateImages( { prompt: this.prompt, question: this.question } )
+    .subscribe( {
+      next: response => {
 
-      this.requestPending = false;
-
-      let images: Artwork[] = [];
-      // @ts-expect-error
-      response.map( ( data, i ) => {
-        const image: Artwork = {
-          id: i,
-          url: `data:image/png;base64,${data.image}`,
-          description: `${data.caption}`,
-          title: data.title
-        };
-        images.push( image );
-
-      } );
-
-      this.newArtworksEvent.emit( images );
-
-    } );
+        this.requestPending = false;
+  
+        let images: Artwork[] = [];
+        // @ts-expect-error
+        response.map( ( data, i ) => {
+          const image: Artwork = {
+            id: i,
+            url: `data:image/png;base64,${data.image}`,
+            description: `${data.caption}`,
+            title: data.title
+          };
+          images.push( image );
+  
+        } );
+  
+        this.newArtworksEvent.emit( images );
+  
+      }, error: error =>{
+        this.error = JSON.stringify(error.error);
+        this.requestPending = false;
+      }
+    });
 
   }
 

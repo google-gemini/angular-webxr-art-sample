@@ -51,7 +51,6 @@ safety_settings = {
 
 @app.route("/imagen", methods=['GET', 'POST', 'OPTIONS'])
 def get_image():
-    http_origin = request.environ.get('HTTP_ORIGIN', 'no origin')
     if request.method == "OPTIONS":
         # Allows GET requests from any origin with the Content-Type
         # header and caches preflight response for an 3600s
@@ -67,7 +66,7 @@ def get_image():
     request_args = request.args
 
     default_image_prompt = 'a picture of a cute cat jumping'
-    default_description_prompt = 'decribe the image'
+    default_description_prompt = 'describe the image'
     default_image_count = 1
     image_prompt = (request_json or request_args).get('image_prompt', default_image_prompt)
     input_prompt = (request_json or request_args).get('desc_prompt', default_description_prompt)
@@ -77,22 +76,25 @@ def get_image():
     if image_count > MAX_IMAGE_COUNT:
         return ("Invalid image_count. Maximum image count is 5.", 406)
 
-    images = get_images_with_count(image_prompt, image_count)
-    image_strings = []
-    caption_input = []
-    for img in images:
-        temp_bytes = img._image_bytes
-        image_strings.append(base64.b64encode(temp_bytes).decode("ascii"))
-        temp_image=Part.from_data(
-                mime_type="image/png",
-                data=temp_bytes)
-        caption_input.append(temp_image)
-    captions = caption_model.generate_content(
-        caption_input + [text_prompt],
-        generation_config=caption_generation_config,
-        safety_settings=safety_settings,
-    )
-    captions_list = make_captions(captions)
+    try:
+        images = get_images_with_count(image_prompt, image_count)
+        image_strings = []
+        caption_input = []
+        for img in images:
+            temp_bytes = img._image_bytes
+            image_strings.append(base64.b64encode(temp_bytes).decode("ascii"))
+            temp_image=Part.from_data(
+                    mime_type="image/png",
+                    data=temp_bytes)
+            caption_input.append(temp_image)
+        captions = caption_model.generate_content(
+            caption_input + [text_prompt],
+            generation_config=caption_generation_config,
+            safety_settings=safety_settings,
+        )
+        captions_list = make_captions(captions)
+    except Exception as error:
+        return (jsonify({ "error": str(error) }), 500, { "Access-Control-Allow-Origin": "*" })
     
     resp_images_dict = []
     for img, cap in zip(image_strings, captions_list):
