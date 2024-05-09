@@ -103,3 +103,7 @@ p {
 input {
     width: 320px;
 }
+
+[disabled] {
+    opacity: 0.5;
+}

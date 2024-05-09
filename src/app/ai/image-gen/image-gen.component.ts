@@ -20,6 +20,8 @@ import { FormsModule } from '@angular/forms';
 
 import { Artwork } from '../../artworks.service';
 import { GenerativeService } from '../generative.service';
+import { catchError } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component( {
   selector: 'art-image-gen',
@@ -31,10 +33,12 @@ import { GenerativeService } from '../generative.service';
 export class ImageGenComponent {
   private generative = inject( GenerativeService );
 
-  newArtworksEvent = output<Artwork[]>();
-  prompt: string = '';
-  question: string = '';
-  message: WritableSignal<string> = signal( 'Welcome to WebXR Generative AI Art Gallery!' );
+  protected newArtworksEvent = output<Artwork[]>();
+  protected prompt = '';
+  protected question = '';
+  protected message = signal( 'Welcome to WebXR Generative AI Art Gallery!' );
+  protected requestPending = false;
+  protected error = '';
 
   genImages () {
 
@@ -42,8 +46,17 @@ export class ImageGenComponent {
     this.prompt = this.prompt == '' ? 'A steampunk era science lab with a stylish figure in silhouette with dramatic lighting and vibrant colors dominated with copper hue' : this.prompt;
     this.question = this.question == '' ? 'Describe the image and tell me what makes this artwork beautiful' : this.question;
 
+    this.requestPending = true;
+    this.error = null;
+
     // Call the service to generate image and emit the new image info
-    this.generative.generateImages( { prompt: this.prompt, question: this.question } ).subscribe( ( response ) => {
+    this.generative.generateImages( { prompt: this.prompt, question: this.question } ).pipe(catchError((error: any) => {
+      this.error = error.message;
+      this.requestPending = false;
+      return error;
+    })).subscribe( ( response ) => {
+
+      this.requestPending = false;
 
       let images: Artwork[] = [];
       // @ts-expect-error

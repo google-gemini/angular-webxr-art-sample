@@ -25,6 +25,4 @@ import { TweetComponent } from './tweet/tweet.component';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 } )
-export class AppComponent {
-  title = 'angular-webxr-gallery';
-}
+export class AppComponent {}

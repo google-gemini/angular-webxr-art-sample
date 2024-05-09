@@ -15,14 +15,29 @@
 -->
 
 <div id="imagegen">
-    <p>{{this.message()}}</p>
-    <section class="prompt form">
-        <input id="pi" [(ngModel)]="prompt" placeholder="Describe an artwork you would like to create" type="text" />
-        <input id="qi" [(ngModel)]="question" placeholder="Ask a question about the artwork you would like to create"
-            type="text" />
+  <p>{{ this.message() }}</p>
+  <section class="prompt form">
+    <input
+      id="pi"
+      [(ngModel)]="prompt"
+      placeholder="Describe an artwork you would like to create"
+      type="text"
+    />
+    <input
+      id="qi"
+      [(ngModel)]="question"
+      placeholder="Ask a question about the artwork you would like to create"
+      type="text"
+    />
 
-        <button mat-button color="primary" (click)="genImages()">
-            Generate
-        </button>
-    </section>
+    {{ error }}
+    <button
+      mat-button
+      [disabled]="requestPending"
+      color="primary"
+      (click)="genImages()"
+    >
+      Generate
+    </button>
+  </section>
 </div>
