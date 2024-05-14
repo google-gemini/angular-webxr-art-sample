@@ -47,3 +47,5 @@ server/bin
 server/bin
 server/pyvenv.cfg
 server/*.pyc
+./venv
+server/venv/
