@@ -50,8 +50,7 @@ export class XRService {
   // Check XR Support and determine if the session is AR or VR
 
   checkXRSupport ( ops: { renderer: WebGLRenderer, camera: any, scene: any; } ) {
-    if ( this.vrSupported || this.arSupported ) { return true; }
-    else if ( navigator.xr ) {
+    if ( navigator.xr ) {
 
       // Starts the inline session and init AR/VR depending on xrMode
       navigator.xr.isSessionSupported( 'immersive-vr' ).then( ( supported ) => {
@@ -83,11 +82,6 @@ export class XRService {
     this.webXRManager.enabled = true;
     this.session = this.webXRManager.getSession();
     this.initVR();
-    if ( this.xrMode() === 'immersive-vr' ) {
-      this.initVR();
-    } else if ( this.xrMode() === 'immersive-ar' ) {
-      this.initAR();
-    }
 
   }
 
@@ -151,12 +145,10 @@ export class XRService {
 
 
   onSqueze ( e: any ) {
-    console.log( 'Squuze event VR', e );
 
   };
 
   onSelectStart ( e: any ) {
-    console.log( 'Select Start VR event ', e );
     this.userData.isSelecting = true;
     this.interactions.intersectObjects( { controller: this.controllerLeft, scene: this.scene } );
     this.interactions.intersectObjects( { controller: this.controllerRight, scene: this.scene } );
@@ -164,19 +156,16 @@ export class XRService {
   };
 
   onSelect ( e: Event ) {
-    console.log( 'Select VR event ', e );
     this.interactions.intersectObjects( { controller: this.controllerLeft, scene: this.scene, select: true } );
     this.interactions.intersectObjects( { controller: this.controllerRight, scene: this.scene, select: true } );
   }
 
   onSelectEnd ( e: any ) {
-    console.log( 'Select End VR event ', e );
     this.userData.isSelecting = false;
     this.interactions.intersectObjects( { controller: this.controllerLeft, scene: this.scene } );
   }
 
   initAR () {
-    console.log( 'Initializing AR' );
   }
 
   updateInputSources ( session = this.session, frame: any, refSpace: any, scene = this.scene ) {

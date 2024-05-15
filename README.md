@@ -5,7 +5,7 @@ Angular WebXR Art Sample is a WebXR Gallery that creates Generative AI images us
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.1.0-rc.1.
 
-[![Angular WebXR Art Sample](http://img.youtube.com/vi/B-k8ZNVM-F4/0.jpg)](https://youtu.be/B-k8ZNVM-F4)
+[![Angular WebXR Art Sample](http://img.youtube.com/vi/XRvymNPSVF4/0.jpg)](https://www.youtube.com/shorts/XRvymNPSVF4)
 
 ## Pre-requisites
 
