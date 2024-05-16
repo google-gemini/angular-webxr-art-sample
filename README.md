@@ -3,6 +3,14 @@
 
 Angular WebXR Art Sample is a WebXR Gallery that creates Generative AI images using [Vertex AI Image Generation](https://cloud.google.com/vertex-ai/generative-ai/docs/image/overview) and creates captioning using [Gemini Multimodel API](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/overview#multimodal_models).
 
+<a href="https://idx.google.com/import?url=https://github.com/google-gemini/angular-webxr-art-sample">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://cdn.idx.dev/btn/open_dark_32@2x.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://cdn.idx.dev/btn/open_light_32@2x.png">
+  <img height="32" alt="Open in IDX" src="https://cdn.idx.dev/btn/open_purple_32@2x.png">
+</picture>
+</a>
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.1.0-rc.1.
 
 [![Angular WebXR Art Sample](http://img.youtube.com/vi/XRvymNPSVF4/0.jpg)](https://www.youtube.com/shorts/XRvymNPSVF4)
