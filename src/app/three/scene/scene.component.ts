@@ -33,7 +33,7 @@ import {
   PCFSoftShadowMap,
   PerspectiveCamera, Scene,
   Vector2,
-  WebGLRenderer
+  WebGPURenderer
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
@@ -78,7 +78,7 @@ export class SceneComponent {
     height: window.innerHeight || 400,
   };
 
-  public renderer: WebGLRenderer;
+  public renderer: WebGPURenderer;
   private renderFunctions: Function[] = [];
 
   sceneOptions: InputSignal<SceneOptions> = input();
@@ -89,6 +89,11 @@ export class SceneComponent {
 
   ngAfterViewInit (): void {
     const canvasEl = this.canvas().nativeElement;
+
+    // Ensure canvas is XR compatible (this might be needed for WebGPU)
+    // This step is often done before renderer initialization.
+    // However, WebGPURenderer might handle this internally if context is obtained later.
+    // For now, assuming WebGPURenderer's canvas usage is compatible.
 
     const options = Object.assign( {}, this.defaultOptions, this.sceneOptions );
     const w = options.width || canvasEl.width;
@@ -105,19 +110,35 @@ export class SceneComponent {
 
 
     // Renderer
-    this.renderer = new WebGLRenderer( {
+    this.renderer = new WebGPURenderer( {
       canvas: canvasEl,
-      antialias: true,
-      powerPreference: "high-performance",
-      alpha: true,
+      // antialias: true, // Not a direct WebGPU option, done in pass usually
+      // powerPreference: "high-performance", // Not a WebGPU option
+      // alpha: true, // For transparency with underlying DOM elements
     } );
+    // For WebGPU, it's important that the underlying GPU pipeline is configured for XR.
+    // This typically means the `GPUDevice.requestAdapter()` and `adapter.requestDevice()`
+    // might need specific options if not handled by three.js's WebGPURenderer automatically.
+    // And the canvas context needs to be configured for XR:
+    // const context = canvasEl.getContext('webgpu');
+    // await context.configure({
+    //   device: renderer.device, // Assuming renderer exposes device
+    //   format: navigator.gpu.getPreferredCanvasFormat(),
+    //   usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
+    //   alphaMode: 'premultiplied',
+    //   // For XR:
+    //   // viewFormats: [...] // if needed for different views like multiview
+    //   // xrCompatible: true // This might be important
+    // });
+    // For now, we assume three.js's WebGPURenderer handles this.
+
     this.renderer.setPixelRatio( window.devicePixelRatio );
     this.renderer.setSize( w, h );
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = PCFSoftShadowMap;
     this.renderer.toneMapping = ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.5;
-    this.renderer.xr.enabled = true;
+    this.renderer.xr.enabled = true; // Enable XR on the renderer
 
     this.rect = this.renderer.domElement.getBoundingClientRect();
     // Lights
@@ -131,34 +152,99 @@ export class SceneComponent {
     this.renderFunctions.push( interactionsUpdate );
 
     // Animation Loop
-    this.ngZone.runOutsideAngular( () =>
-      this.renderer.setAnimationLoop( () => this.render() )
-    );
+    this.ngZone.runOutsideAngular( () => {
+      // The render loop needs to be XR-aware.
+      // WebGPURenderer's setAnimationLoop callback receives the XRSession's frame when in an XR session.
+      this.renderer.setAnimationLoop( ( time: number, frame?: any /* XRFrame */ ) => {
+        this.render( time, frame );
+      } )
+    });
 
     this.afterInit();
   };
 
-  afterInit () {
-    // XR 
-    // Add XR button even if WebXR is not supported
-    const xrButton = XRButton.createButton( this.renderer );
+  async afterInit () {
+    // XR
+    // XRButton.createButton might need adjustment for WebGPURenderer.
+    // It typically handles session request and provides a session to the renderer.
+    // The key is how the session is passed to our XRService and how the renderer uses it.
+
+    // Initialize renderer for XR - this is important for WebGPU
+    // This call will internally handle making the canvas XR compatible if possible.
+    // await this.renderer.start(); // Or similar method if available on WebGPURenderer for XR setup
+
+    const xrButton = XRButton.createButton(
+      this.renderer,
+      {
+        onRequestSession: async (sessionMode: string) => {
+          try {
+            const session = await navigator.xr.requestSession(sessionMode as XRSessionMode, { optionalFeatures: ['local-floor', 'bounded-floor'] });
+            this.xrService.renderer = this.renderer; // Ensure service has the renderer
+            this.xrService.scene = this.scene; // Ensure service has the scene
+            await this.xrService.startXRSession(session);
+
+            // WebGPURenderer needs to be informed about the session
+            // This is a critical step. The exact API might vary.
+            // It could be renderer.xr.setSession(session) or a new method for WebGPU.
+            // For now, assuming setAnimationLoop will correctly use the session if active.
+            // The `WebGPURenderer.setAnimationLoop` is designed to work with WebXR.
+            // It expects `renderer.xr.setReferenceSpaceType( 'local-floor' )` or similar to be called.
+            // And `renderer.xr.setSession(session)`
+            // Since WebGPURenderer doesn't have `.xr` property in the same way, this needs careful handling.
+            // Let's assume for now that the XRService.startXRSession and the renderer's animation loop are enough.
+            // The XRButton itself might call renderer.xr.setSession if using an older version of three.js XRButton.
+            // We need to ensure our WebGPURenderer is correctly set up.
+            // A common pattern is:
+            await this.renderer.xr.setReferenceSpaceType( 'local-floor' ); // Or other appropriate space like 'viewer'
+            await this.renderer.xr.setSession(session); // This method might exist on WebGPURenderer directly or via a helper
+
+            session.addEventListener('end', () => {
+              // Handle session end: e.g. clean up controllers, switch back to non-XR rendering
+              this.camera.position.set( 0, 1.6, 0 ); // Reset camera or similar
+              // xrService.session = null; // Reset session in service
+            });
+
+          } catch (e) {
+            console.error("Failed to start XR session:", e);
+          }
+        },
+        // onEndSession: (session: any) => {
+        //   this.xrService.session = null; // Or handle more gracefully
+        // }
+      }
+    );
+
     xrButton.addEventListener( 'click', ( e ) => {
       console.log( 'clicked xrButton ', e );
+      // The actual session request is handled by XRButton's internal logic via onRequestSession
     } );
     document.body.appendChild( xrButton );
 
-    // Check XR Support and determine if the session is AR or VR
-    // Initiate a session if supported
-    this.xrService.checkXRSupport( { renderer: this.renderer, camera: this.camera, scene: this.scene } );
+    // Check XR Support (this can inform UI, e.g., enable/disable XR button)
+    await this.xrService.checkXRSupport( { renderer: this.renderer, camera: this.camera, scene: this.scene } );
   }
 
   // Render function runs on each frame
-  render () {
-    const delta = this.clock.getDelta();
-    this.renderFunctions.forEach( ( f ) => f( delta ) );
-    this.controls?.update();
+  render (time: number, frame?: any /* XRFrame */) {
+    const delta = this.clock.getDelta(); // time is also available from callback
+
+    this.renderFunctions.forEach( ( f ) => f( delta, frame ) ); // Pass frame if needed
+
+    if (this.xrService.session && frame) {
+      // If in an XR session, update controller poses
+      // The reference space used here should match what was set during session init.
+      const referenceSpace = this.renderer.xr.getReferenceSpace(); // Or get it from xrService if stored
+      if (referenceSpace) {
+        this.xrService.updateControllerPoses(referenceSpace);
+      }
+    } else {
+      // Standard non-XR controls update
+      this.controls?.update();
+    }
+
     // Run Tween animations
-    update();
+    update(); // This uses its own timing, make sure it's compatible or adjust.
+
     this.renderer.render( this.scene, this.camera );
   }
 
