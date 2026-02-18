@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^17.3.5",
-    "@angular/cli": "^17.3.5",
+    "@angular/cli": "^21.1.4",
     "@angular/compiler-cli": "^17.3.7",
     "@puppeteer/ng-schematics": "0.6.0",
     "@types/jasmine": "~5.1.0",
